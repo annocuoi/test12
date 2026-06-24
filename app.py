@@ -1376,14 +1376,29 @@ if st.session_state.quyen == "admin":
 if st.session_state.quyen == "hoi":
     with tab_hoi_vien:
 
-        st.markdown(
-            "<h3>👥 2. Hội Viên & Cấp Phát</h3>",
-            unsafe_allow_html=True
+        tab_cap_phat, tab_cap_nhanh, tab_ds_tv = st.tabs(
+            [
+                "👥 Hội viên & Cấp phát",
+                "🌸 Cấp nhanh hoa",
+                "📋 Danh sách hội viên"
+            ]
         )
+        with tab_cap_phat:
 
-        col_tv1, col_tv2 = st.columns(2)
+            st.markdown("## 👥 2. Hội Viên & Cấp Phát")
+
+        with tab_cap_nhanh:
+
+            st.markdown("## 🌸 Cấp nhanh hoa")
+
+            st.info("Chức năng cấp nhanh để thêm sau")
 
 
+        with tab_ds_tv:
+
+            st.markdown("## 📋 Danh sách hội viên")
+
+            st.info("Danh sách hội viên để thêm sau")
         # =====================
         # BÊN TRÁI: HỘI VIÊN
         # =====================
