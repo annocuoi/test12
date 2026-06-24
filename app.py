@@ -1461,178 +1461,46 @@ if st.session_state.quyen == "hoi":
                             if luu_du_lieu():
                                 st.rerun()
         with tab_cap_nhanh:
-
             st.markdown("## 🪷 Cấp Hoa Cho Hội Viên")
-
-
-            danh_sach_tv = [
-                x for x in du_lieu_hoi_dang_dung.keys()
-                if not x.startswith("_")
-            ]
-
-
-            tv_chon = st.selectbox(
-                "👤 Chọn hội viên",
-                ["-- Chọn --"] + danh_sach_tv,
-                key="chon_tv_cap_nhanh"
-            )
-
-
+            danh_sach_tv = [x for x in du_lieu_hoi_dang_dung.keys() if not x.startswith("_")]
+            tv_chon = st.selectbox("👤 Chọn hội viên", ["-- Chọn --"] + danh_sach_tv, key="chon_tv_cap_nhanh")
+        
             if tv_chon != "-- Chọn --":
-
-
-                hoa_da_co = du_lieu_hoi_dang_dung.get(
-                    tv_chon,
-                    []
-                )
-
-
-                danh_sach_hoa_goc = [
-                    hoa
-                    for hoa in st.session_state.kho_hoa_tong.keys()
-                    if hoa not in hoa_da_co
-                ]
-
-
-                # =====================
-                # ĐẾM CẤP HOA
-                # =====================
-
-                dem_cap = {
-                    "Đỏ":0,
-                    "Cam":0,
-                    "Tím":0,
-                    "Xanh dương":0,
-                    "Xanh lá":0
-                }
-
-
-                for hoa in danh_sach_hoa_goc:
-
-                    cap = (
-                        st.session_state.kho_hoa_tong
-                        .get(hoa,{})
-                        .get("cap")
-                    )
-
-                    if cap in dem_cap:
-                        dem_cap[cap] += 1
-
-
-
-                mau_chon = st.radio(
-                    "🌈 Loại hoa",
-                    [
-                        f"🌸 Tất cả: {len(danh_sach_hoa_goc)}",
-                        f"🔴 Đỏ: {dem_cap['Đỏ']}",
-                        f"🟠 Cam: {dem_cap['Cam']}",
-                        f"🟣 Tím: {dem_cap['Tím']}",
-                        f"🔵 Xanh dương: {dem_cap['Xanh dương']}",
-                        f"🟢 Xanh lá: {dem_cap['Xanh lá']}"
-                    ],
-                    horizontal=True,
-                    key="loc_mau_cap_hoa"
-                )
-
-
-                danh_sach_hoa = danh_sach_hoa_goc.copy()
-
-
-                if "Tất cả" not in mau_chon:
-
-
-                    ten_mau = (
-                        mau_chon
-                        .split(":")[0]
-                        .replace("🔴 ","")
-                        .replace("🟠 ","")
-                        .replace("🟣 ","")
-                        .replace("🔵 ","")
-                        .replace("🟢 ","")
-                    )
-
-
-                    danh_sach_hoa = [
-
-                        hoa for hoa in danh_sach_hoa
-
-                        if st.session_state.kho_hoa_tong
-                        .get(hoa,{})
-                        .get("cap") == ten_mau
-
-                    ]
-
-
-
-                st.markdown("### 🌸 Chọn hoa")
-
-
-                hoa_chon = []
-
-
-                # =====================
-                # KHUNG CUỘN HOA NHẸ
-                # =====================
-
-                with st.container(height=650):
-
-                    cols = st.columns(4)
-
-                    for i, hoa in enumerate(danh_sach_hoa):
-
-                        with cols[i % 4]:
-
-                            thong_tin = (
-                                st.session_state
-                                .kho_hoa_tong
-                                .get(hoa,{})
-                            )
-
-
-                            cap = thong_tin.get("cap")
-
-                            class_mau = {
-                                "Đỏ": "ten-cap-do",
-                                "Cam": "ten-cap-cam",
-                                "Tím": "ten-cap-tim",
-                                "Xanh dương": "ten-cap-xanhduong",
-                                "Xanh lá": "ten-cap-xanhla"
-                            }.get(cap,"")
-
-
-                            cot_tick, cot_chu = st.columns(
-                                [0.2, 4]
-                            )
-
-
-                            with cot_tick:
-
-                                tick = st.checkbox(
-                                    "",
-                                    key=f"chon_{tv_chon}_{hoa}"
-                                )
-
-
-                            with cot_chu:
-
-                                st.markdown(
-                                    f"""
-                                    <div class="{class_mau}"
-                                    style="
-                                        font-weight:900;
-                                        font-size:16px;
-                                        margin-top:5px;
-                                        white-space:nowrap;
-                                    ">
-                                    {hoa}
-                                    </div>
-                                    """,
-                                    unsafe_allow_html=True
-                                )
-
-
-                            if tick:
-                                hoa_chon.append(hoa)
+                danh_sach_hoa = [h for h in st.session_state.kho_hoa_tong.keys() if h not in du_lieu_hoi_dang_dung.get(tv_chon, [])]
+                
+                # DÙNG CSS GRID THAY VÌ ST.COLUMNS ĐỂ ÉP MOBILE
+                with st.form(key="form_cap_hoa"):
+                    st.markdown('<div class="grid-force">', unsafe_allow_html=True)
+                    
+                    hoa_chon = []
+                    for hoa in danh_sach_hoa:
+                        info = st.session_state.kho_hoa_tong.get(hoa, {})
+                        link = anh_html(info.get("anh"))
+                        
+                        # Hiển thị ảnh hoa
+                        st.markdown(f'''
+                        <div class="hoa-item">
+                            <img src="{link}" style="width:100%; border-radius:5px;">
+                            <div style="font-size:10px; font-weight:bold; margin-top:4px;">{hoa}</div>
+                        </div>
+                        ''', unsafe_allow_html=True)
+                        
+                        # Checkbox
+                        if st.checkbox("Chọn", key=f"cap_{tv_chon}_{hoa}"):
+                            hoa_chon.append(hoa)
+                    
+                    st.markdown('</div>', unsafe_allow_html=True)
+                    
+                    if st.form_submit_button("🌺 Hoàn thành cấp hoa"):
+                        if not hoa_chon: st.warning("⚠️ Chưa chọn hoa!")
+                        else:
+                            for h in hoa_chon:
+                                if h not in du_lieu_hoi_dang_dung[tv_chon]: du_lieu_hoi_dang_dung[tv_chon].append(h)
+                            if luu_du_lieu():
+                                st.success("✅ Thành công!")
+                                st.rerun()
+            else:
+                st.info("👆 Chọn hội viên để cấp hoa")
                 # =====================
                 # LƯU
                 # =====================
