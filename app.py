@@ -250,7 +250,22 @@ st.markdown(
         border-radius:12px;
     }
 
-
+    /* 👇 THÊM ĐOẠN CSS FIX MOBILE NÀY VÀO 👇 */
+    @media (max-width: 768px) {
+        /* Bắt buộc dàn hàng ngang và tự rớt dòng */
+        div[data-testid="stHorizontalBlock"]:has(.flower-box) {
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+        }
+        /* Ép kích thước để hiển thị chính xác 3 hình 1 hàng trên điện thoại */
+        div[data-testid="column"]:has(.flower-box) {
+            min-width: unset !important;
+            width: 31% !important; 
+            flex: 1 1 31% !important;
+            padding: 0 2px !important;
+        }
+    }
+    /* 👆 KẾT THÚC ĐOẠN THÊM 👆 */
     </style>
     """,
     unsafe_allow_html=True
