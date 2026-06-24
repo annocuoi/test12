@@ -328,10 +328,6 @@ html, body{
 
 </style>
 """
-st.markdown(
-    GRID_STYLE,
-    unsafe_allow_html=True
-)
 def anh_html(data):
     if not data:
         return ""
@@ -1287,7 +1283,7 @@ if st.session_state.quyen == "admin":
             
             
                     components.html(
-                        html,
+                        GRID_STYLE + html,
                         height=450,
                         scrolling=True
                     )
@@ -1899,10 +1895,10 @@ if st.session_state.quyen != "admin":
         
         
                     components.html(
-            html,
-            height=450,
-            scrolling=True
-        )
+                        GRID_STYLE + html,
+                        height=450,
+                        scrolling=True
+                    )
         
         
                     st.write("")
@@ -2067,7 +2063,7 @@ if st.session_state.quyen != "admin":
 
 
                 components.html(
-                    html,
+                    GRID_STYLE + html,
                     height=450,
                     scrolling=True
                 )
