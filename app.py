@@ -1475,7 +1475,7 @@ if st.session_state.quyen == "hoi":
                 ]
 
 
-                mau_chon = st.selectbox(
+                mau_chon = st.radio(
                     "🌈 Loại hoa",
                     [
                         "🌸 Tất cả",
@@ -1485,6 +1485,7 @@ if st.session_state.quyen == "hoi":
                         "🔵 Xanh dương",
                         "🟢 Xanh lá"
                     ],
+                    horizontal=True,
                     key="loc_mau_cap_hoa"
                 )
 
