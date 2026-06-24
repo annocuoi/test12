@@ -1681,7 +1681,18 @@ if st.session_state.quyen == "hoi":
 
                 })
 
+            # 🏆 SẮP XẾP HẠNG
+            bang_tv = sorted(
+                bang_tv,
+                key=lambda x: x["🌸 Tổng"],
+                reverse=True
+            )
 
+
+            # thêm số hạng
+            for i, tv in enumerate(bang_tv, start=1):
+
+                tv["🏆 Hạng"] = i
             st.dataframe(
                 bang_tv,
                 hide_index=True,
