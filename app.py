@@ -1543,6 +1543,8 @@ if st.session_state.quyen == "hoi":
                             }.get(cap, "#cccccc")
 
 
+                            # ===== HIỂN THỊ HOA =====
+
                             st.markdown(
                                 f"""
                                 <div style="
@@ -1561,18 +1563,27 @@ if st.session_state.quyen == "hoi":
 
                             st.markdown(
                                 f"""
-                                <div style="
+                                <style>
+
+                                div[data-testid="stImage"] img {{
+
                                     border:5px solid {mau_vien};
                                     border-radius:12px;
-                                    width:115px;
-                                    height:115px;
-                                    margin:auto;
-                                    margin-top:-115px;
-                                    margin-bottom:15px;
-                                ">
-                                </div>
+                                    padding:3px;
 
-                                <b>{hoa}</b>
+                                }}
+
+                                </style>
+
+
+                                <div style="
+                                    text-align:center;
+                                    font-weight:bold;
+                                    font-size:16px;
+                                    margin-top:5px;
+                                ">
+
+                                {hoa}
 
                                 </div>
                                 """,
