@@ -1562,17 +1562,16 @@ if st.session_state.quyen == "hoi":
 
                         st.markdown(
                             f"""
-                            <div style="text-align:center">
+                            <div style='text-align:center'>
 
-                                <img src="{anh}"
-                                style="
-                                    width:85px;
-                                    height:85px;
-                                    object-fit:cover;
-                                    border:5px solid {mau_vien};
-                                    border-radius:10px;
-                                    padding:3px;
-                                ">
+                                <img src='{anh}' style='
+                                width:85px;
+                                height:85px;
+                                object-fit:cover;
+                                border:5px solid {mau_vien};
+                                border-radius:10px;
+                                padding:3px;
+                                '>
 
                                 <br>
 
