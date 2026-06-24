@@ -1471,6 +1471,23 @@ if st.session_state.quyen == "hoi":
                     horizontal=True,
                     key="loc_mau_cap_hoa"
                 )
+                # 🔍 TÌM HOA
+                tim_hoa = st.text_input(
+                    "🔍 Tìm hoa",
+                    placeholder="Nhập tên hoa cần tìm...",
+                    key="tim_hoa_cap_nhanh"
+                )
+
+                if tim_hoa.strip():
+
+                    danh_sach_hoa = [
+                        hoa
+                        for hoa in danh_sach_hoa
+                        if tim_hoa.lower() in hoa.lower()
+                    ]
+
+
+st.markdown("### 🌸 Chọn hoa")
 
 
                 danh_sach_hoa = danh_sach_hoa_goc.copy()
