@@ -1504,10 +1504,9 @@ if st.session_state.quyen == "hoi":
                     danh_sach_hoa = [
                         hoa
                         for hoa in danh_sach_hoa
-                        if hoa in st.session_state.kho_hoa_tong.get(
-                            ten_mau,
-                            []
-                        )
+                        if st.session_state.kho_hoa_tong
+                        .get(hoa, {})
+                        .get("cap") == ten_mau
                     ]
 
 
