@@ -1543,38 +1543,36 @@ if st.session_state.quyen == "hoi":
                             }.get(cap, "#cccccc")
 
 
-                            if isinstance(anh, bytes):
+                            st.markdown(
+                                f"""
+                                <div style="
+                                    text-align:center;
+                                ">
+                                """,
+                                unsafe_allow_html=True
+                            )
 
-                                anh = (
-                                    "data:image/png;base64,"
-                                    +
-                                    base64.b64encode(anh).decode()
-                                )
+
+                            st.image(
+                                anh,
+                                width=100
+                            )
 
 
                             st.markdown(
                                 f"""
                                 <div style="
-                                    text-align:center;
-                                    margin-bottom:8px;
-                                ">
-
-                                    <img src="{anh}"
-                                    style="
-                                    width:95px;
-                                    height:95px;
-                                    object-fit:cover;
                                     border:5px solid {mau_vien};
                                     border-radius:12px;
-                                    ">
+                                    width:115px;
+                                    height:115px;
+                                    margin:auto;
+                                    margin-top:-115px;
+                                    margin-bottom:15px;
+                                ">
+                                </div>
 
-                                    <div style="
-                                    font-weight:bold;
-                                    font-size:16px;
-                                    margin-top:5px;
-                                    ">
-                                    {hoa}
-                                    </div>
+                                <b>{hoa}</b>
 
                                 </div>
                                 """,
@@ -1588,7 +1586,6 @@ if st.session_state.quyen == "hoi":
                             ):
 
                                 hoa_chon.append(hoa)
-
 
 
                 if st.button(
