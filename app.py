@@ -1569,8 +1569,7 @@ if st.session_state.quyen == "hoi":
                                 .get(hoa,{})
                             )
 
-                            cap = thong_tin.get("cap")
-
+                            cap = thong_tin.get("mau")
 
                             mau_chu = {
 
