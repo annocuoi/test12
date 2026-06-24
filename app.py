@@ -1580,36 +1580,40 @@ if st.session_state.quyen == "hoi":
                                 "Xanh dương": "#0066ff",
                                 "Xanh lá": "#00aa00"
 
-                            }.get(
-                                cap,
-                                "#000000"
+                            }.get(cap,"black")
+
+
+                            col_tick, col_ten = st.columns(
+                                [1,5]
                             )
 
 
-                            # đổi màu chữ checkbox
-                            st.markdown(
-                                f"""
-                                <style>
+                            with col_tick:
 
-                                div[data-testid="stCheckbox"]
-                                label p {{
-
-                                    color:{mau_chu};
-                                    font-weight:bold;
-                                    font-size:16px;
-
-                                }}
-
-                                </style>
-                                """,
-                                unsafe_allow_html=True
-                            )
+                                tick = st.checkbox(
+                                    "",
+                                    key=f"chon_{tv_chon}_{hoa}"
+                                )
 
 
-                            if st.checkbox(
-                                hoa,
-                                key=f"chon_{tv_chon}_{hoa}"
-                            ):
+                            with col_ten:
+
+                                st.markdown(
+                                    f"""
+                                    <div style="
+                                        color:{mau_chu};
+                                        font-weight:bold;
+                                        font-size:16px;
+                                        padding-top:6px;
+                                    ">
+                                        {hoa}
+                                    </div>
+                                    """,
+                                    unsafe_allow_html=True
+                                )
+
+
+                            if tick:
 
                                 hoa_chon.append(hoa)
                 # =====================
