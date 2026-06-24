@@ -1335,14 +1335,14 @@ if st.session_state.quyen == "hoi":
 
         tab_cap_phat, tab_cap_nhanh, tab_ds_tv = st.tabs(
             [
-                "👥 Hội viên & Cấp phát",
+                "👥 Hội viên",
                 "🌸 Cấp nhanh hoa",
                 "📋 Danh sách hội viên"
             ]
         )
         with tab_cap_phat:
 
-            st.markdown("## 👥 2. Hội Viên & Cấp Phát")
+            st.markdown("## 👥 Thêm + Xóa Hội Viên")
             col_tv1 = st.container()
             with col_tv1:
 
