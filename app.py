@@ -1552,69 +1552,51 @@ if st.session_state.quyen == "hoi":
 
 
                 # =====================
-                # KHUNG CUỘN HOA NHẸ
+                # KHUNG CUỘN HOA (ĐÃ FIX LỖI GIAO DIỆN)
                 # =====================
 
+                # Áp dụng CSS toàn cục để st.markdown có thể nhận class flower-box, cap-do...
+                st.markdown(GRID_STYLE, unsafe_allow_html=True)
+                
                 with st.container(height=650):
+                    
+                    SO_COT = 6  # Tương đương minmax 80px của Hình 1
+                    
+                    for i in range(0, len(danh_sach_hoa), SO_COT):
+                        cols = st.columns(SO_COT)
+                        for j in range(SO_COT):
+                            chi_so = i + j
+                            if chi_so < len(danh_sach_hoa):
+                                hoa = danh_sach_hoa[chi_so]
+                                thong_tin = st.session_state.kho_hoa_tong.get(hoa, {})
+                                
+                                mau_cap = {
+                                    "Xanh lá": "cap-xanh-la",
+                                    "Xanh dương": "cap-xanh-duong",
+                                    "Tím": "cap-tim",
+                                    "Cam": "cap-cam",
+                                    "Đỏ": "cap-do"
+                                }.get(thong_tin.get("cap"), "cap-do")
 
-                    cols = st.columns(4)
+                                link_anh = anh_html(thong_tin.get("anh"))
+                                
+                                with cols[j]:
+                                    # Hiển thị ảnh hoa y hệt Hình 1
+                                    st.markdown(
+                                        f"""
+                                        <div class="flower-box" style="margin-bottom: 5px;">
+                                            <img class="{mau_cap}" src="{link_anh}">
+                                            <div class="flower-name">{hoa}</div>
+                                        </div>
+                                        """,
+                                        unsafe_allow_html=True
+                                    )
+                                    
+                                    # Căn giữa checkbox nhỏ nhắn ở dưới
+                                    st.markdown("""<style>[data-testid="stCheckbox"] {display:flex; justify-content:center;}</style>""", unsafe_allow_html=True)
+                                    if st.checkbox("Chọn", key=f"cap_{tv_chon}_{hoa}"):
+                                        hoa_chon.append(hoa)
 
-                    for i, hoa in enumerate(danh_sach_hoa):
-
-                        with cols[i % 4]:
-
-                            thong_tin = (
-                                st.session_state
-                                .kho_hoa_tong
-                                .get(hoa,{})
-                            )
-
-                            cap = thong_tin.get("mau")
-
-                            mau_chu = {
-
-                                "Đỏ": "red",
-                                "Cam": "orange",
-                                "Tím": "purple",
-                                "Xanh dương": "blue",
-                                "Xanh lá": "green"
-
-                            }.get(cap,"black")
-
-
-                            cot_tick, cot_chu = st.columns(
-                                [0.25, 3]
-                            )
-
-
-                            with cot_tick:
-
-                                tick = st.checkbox(
-                                    "",
-                                    key=f"chon_{tv_chon}_{hoa}"
-                                )
-
-
-                            with cot_chu:
-
-                                st.markdown(
-                                    f"""
-                                    <div style="
-                                        color:{mau_chu};
-                                        font-weight:700;
-                                        font-size:16px;
-                                        margin-top:6px;
-                                    ">
-                                    {hoa}
-                                    </div>
-                                    """,
-                                    unsafe_allow_html=True
-                                )
-
-
-                            if tick:
-
-                                hoa_chon.append(hoa)
                 # =====================
                 # LƯU
                 # =====================
