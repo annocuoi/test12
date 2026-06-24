@@ -1520,9 +1520,28 @@ if st.session_state.quyen == "hoi":
                 # chia 4 cột
                 cols = st.columns(4)
 
+
                 for i, hoa in enumerate(danh_sach_hoa):
 
                     with cols[i % 4]:
+
+                        thong_tin = st.session_state.kho_hoa_tong.get(
+                            hoa,
+                            {}
+                        )
+
+                        anh = thong_tin.get(
+                            "anh"
+                        )
+
+
+                        if anh:
+
+                            st.image(
+                                anh,
+                                width=80
+                            )
+
 
                         if st.checkbox(
                             hoa,
