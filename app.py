@@ -1628,60 +1628,57 @@ if st.session_state.quyen == "hoi":
 
             bang_tv = []
 
+            for ten_tv, ds_hoa in du_lieu_hoi_dang_dung.items():
 
-            for tv in danh_sach_tv:
+                if ten_tv.startswith("_"):
+                    continue
 
                 dem = {
-
-                    "Đỏ":0,
-                    "Cam":0,
-                    "Tím":0,
-                    "Xanh dương":0,
-                    "Xanh lá":0
-
+                    "Đỏ": 0,
+                    "Cam": 0,
+                    "Tím": 0,
+                    "Xanh dương": 0,
+                    "Xanh lá": 0
                 }
 
 
-                ds_hoa_tv = du_lieu_hoi_dang_dung.get(
-                    tv,
-                    []
-                )
+                for hoa in ds_hoa:
 
-
-                for hoa in ds_hoa_tv:
-
-                    mau = (
+                    thong_tin = (
                         st.session_state
                         .kho_hoa_tong
                         .get(hoa,{})
-                        .get("mau")
+                    )
+
+                    # lấy cả 2 trường cho khỏi lỗi
+                    mau = (
+                        thong_tin.get("mau")
+                        or
+                        thong_tin.get("cap")
                     )
 
 
                     if mau in dem:
-
                         dem[mau] += 1
+
+
+                tong = sum(dem.values())
 
 
                 bang_tv.append({
 
-                    "👤 Hội viên": str(tv),
-
-                    "🌸 Tổng": len(ds_hoa_tv),
-
+                    "👤 Hội viên": ten_tv,
+                    "🌸 Tổng": tong,
                     "🔴 Đỏ": dem["Đỏ"],
-
                     "🟠 Cam": dem["Cam"],
-
                     "🟣 Tím": dem["Tím"],
-
                     "🔵 Xanh dương": dem["Xanh dương"],
-
                     "🟢 Xanh lá": dem["Xanh lá"]
 
                 })
 
-            # 🏆 SẮP XẾP HẠNG
+
+            # 🏆 xếp hạng ngầm (không hiện cột)
             bang_tv = sorted(
                 bang_tv,
                 key=lambda x: x["🌸 Tổng"],
@@ -1689,10 +1686,6 @@ if st.session_state.quyen == "hoi":
             )
 
 
-            # thêm số hạng
-            for i, tv in enumerate(bang_tv, start=1):
-
-                tv["🏆 Hạng"] = i
             st.dataframe(
                 bang_tv,
                 hide_index=True,
