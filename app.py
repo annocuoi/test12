@@ -1387,9 +1387,6 @@ if st.session_state.quyen == "hoi":
 
             st.markdown("## 👥 2. Hội Viên & Cấp Phát")
             col_tv1, col_tv2 = st.columns(2)
-        # =====================
-        # BÊN TRÁI: HỘI VIÊN
-        # =====================
             with col_tv1:
 
                 with st.expander(
@@ -1444,129 +1441,80 @@ if st.session_state.quyen == "hoi":
 
                             if luu_du_lieu():
                                 st.rerun()
-
-
-            # =====================
-            # BÊN PHẢI: CẤP HOA
-            # =====================
-            with col_tv2:
-
-                st.markdown("## 🪷 Thêm Hoa Cho Hội Viên")
-
-                danh_sach_tv = [
-                    x for x in du_lieu_hoi_dang_dung.keys()
-                    if not x.startswith("_")
-                ]
-
-                ds_tv_chon = st.multiselect(
-                    "👥 Chọn hội viên",
-                    danh_sach_tv
-                )
-
-
-                # lấy danh sách hoa đã có của những người chọn
-                hoa_da_co = []
-
-                for tv in ds_tv_chon:
-                    hoa_da_co.extend(
-                        du_lieu_hoi_dang_dung.get(tv, [])
-                    )
-
-
-                # lọc hoa chưa có
-                hoa_chua_co = [
-                    hoa
-                    for hoa in st.session_state.kho_hoa_tong.keys()
-                    if hoa not in hoa_da_co
-                ]
-
-
-                if len(hoa_chua_co) > 0:
-
-                    hoa_chon = st.selectbox(
-                        "🌸 Chọn hoa",
-                        hoa_chua_co,
-                        key="cap_hoa"
-                    )
-
-
-                    if "dang_them_hoa" not in st.session_state:
-                        st.session_state.dang_them_hoa = False
-
-
-                    if st.button(
-                        "🌺 Thêm Hoa",
-                        use_container_width=True,
-                        disabled=st.session_state.dang_them_hoa
-                    ):
-
-                        st.session_state.dang_them_hoa = True
-
-
-                        if not ds_tv_chon:
-
-                            st.warning(
-                                "⚠️ Vui lòng chọn hội viên trước"
-                            )
-
-                            st.session_state.dang_them_hoa = False
-
-
-                        elif not hoa_chon:
-
-                            st.warning(
-                                "⚠️ Vui lòng chọn hoa"
-                            )
-
-                            st.session_state.dang_them_hoa = False
-
-
-                        else:
-
-                            so_luong = 0
-
-                            for tv in ds_tv_chon:
-
-                                # tránh thêm trùng hoa
-                                if hoa_chon not in du_lieu_hoi_dang_dung[tv]:
-
-                                    du_lieu_hoi_dang_dung[tv].append(
-                                        hoa_chon
-                                    )
-
-                                    so_luong += 1
-
-
-                            if luu_du_lieu():
-
-                                st.success(
-                                    f"✅ Đã thêm hoa cho {so_luong} hội viên"
-                                )
-
-                                st.session_state.dang_them_hoa = False
-
-                                st.rerun()
-
-
-                            else:
-
-                                st.session_state.dang_them_hoa = False
-
-                                st.error(
-                                    "❌ Lưu thất bại, kiểm tra mạng"
-                                )
-
-
-                else:
-
-                    st.info(
-                        "✅ Các hội viên đã có tất cả hoa"
-                    )
         with tab_cap_nhanh:
 
             st.markdown("## 🌸 Cấp nhanh hoa")
 
-            st.info("Chức năng cấp nhanh để thêm sau")
+            # =====================
+            # CẤP HOA
+            # =====================
+
+            st.markdown("## 🪷 Thêm Hoa Cho Hội Viên")
+
+            danh_sach_tv = [
+                x for x in du_lieu_hoi_dang_dung.keys()
+                if not x.startswith("_")
+            ]
+
+            ds_tv_chon = st.multiselect(
+                "👥 Chọn hội viên",
+                danh_sach_tv
+            )
+
+            hoa_da_co = []
+
+            for tv in ds_tv_chon:
+                hoa_da_co.extend(
+                    du_lieu_hoi_dang_dung.get(tv, [])
+                )
+
+            hoa_chua_co = [
+                hoa
+                for hoa in st.session_state.kho_hoa_tong.keys()
+                if hoa not in hoa_da_co
+            ]
+
+            if len(hoa_chua_co) > 0:
+
+                hoa_chon = st.selectbox(
+                    "🌸 Chọn hoa",
+                    hoa_chua_co,
+                    key="cap_hoa"
+                )
+
+                if st.button(
+                    "🌺 Thêm Hoa",
+                    use_container_width=True
+                ):
+
+                    if not ds_tv_chon:
+
+                        st.warning(
+                            "⚠️ Chưa chọn hội viên"
+                        )
+
+                    else:
+
+                        so_luong = 0
+
+                        for tv in ds_tv_chon:
+
+                            if hoa_chon not in du_lieu_hoi_dang_dung[tv]:
+
+                                du_lieu_hoi_dang_dung[tv].append(
+                                    hoa_chon
+                                )
+
+                                so_luong += 1
+
+
+                        if luu_du_lieu():
+
+                            st.success(
+                                f"✅ Đã cấp cho {so_luong} hội viên"
+                            )
+
+                            st.rerun()
 
 
         with tab_ds_tv:
