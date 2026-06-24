@@ -1563,24 +1563,22 @@ if st.session_state.quyen == "hoi":
 
                         with cols[i % 4]:
 
-
                             thong_tin = (
                                 st.session_state
                                 .kho_hoa_tong
                                 .get(hoa,{})
                             )
 
-
                             cap = thong_tin.get("cap")
 
 
                             mau_chu = {
 
-                                "Đỏ":"#ff0000",
-                                "Cam":"#ff8800",
-                                "Tím":"#9b00ff",
-                                "Xanh dương":"#0066ff",
-                                "Xanh lá":"#009900"
+                                "Đỏ": "#ff0000",
+                                "Cam": "#ff8800",
+                                "Tím": "#9b00ff",
+                                "Xanh dương": "#0066ff",
+                                "Xanh lá": "#00aa00"
 
                             }.get(
                                 cap,
@@ -1588,28 +1586,32 @@ if st.session_state.quyen == "hoi":
                             )
 
 
+                            # đổi màu chữ checkbox
                             st.markdown(
                                 f"""
-                                <div style="
+                                <style>
+
+                                div[data-testid="stCheckbox"]
+                                label p {{
+
                                     color:{mau_chu};
                                     font-weight:bold;
-                                    font-size:17px;
-                                    height:45px;
-                                ">
-                                🌸 {hoa}
-                                </div>
+                                    font-size:16px;
+
+                                }}
+
+                                </style>
                                 """,
                                 unsafe_allow_html=True
                             )
 
 
                             if st.checkbox(
-                                "Chọn",
-                                key=f"cap_{tv_chon}_{hoa}"
+                                hoa,
+                                key=f"chon_{tv_chon}_{hoa}"
                             ):
 
                                 hoa_chon.append(hoa)
-
                 # =====================
                 # LƯU
                 # =====================
