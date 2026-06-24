@@ -1533,6 +1533,13 @@ if st.session_state.quyen == "hoi":
                         anh = thong_tin.get(
                             "anh"
                         )
+                        if isinstance(anh, bytes):
+
+                            anh = (
+                                "data:image/png;base64,"
+                                +
+                                base64.b64encode(anh).decode()
+                            )
 
 
                         cap = thong_tin.get(
