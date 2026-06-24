@@ -1562,25 +1562,21 @@ if st.session_state.quyen == "hoi":
 
                         st.markdown(
                             f"""
-                            <div style="
-                                border:3px solid {mau_vien};
-                                border-radius:15px;
-                                padding:8px;
-                                text-align:center;
-                                background:rgba(255,255,255,0.35);
-                                margin-bottom:5px;
-                            ">
+                            <div style="text-align:center">
 
-                            <img src="{anh}" 
-                            style="
-                                width:80px;
-                                height:80px;
-                                object-fit:contain;
-                            ">
+                                <img src="{anh}"
+                                style="
+                                    width:85px;
+                                    height:85px;
+                                    object-fit:cover;
+                                    border:5px solid {mau_vien};
+                                    border-radius:10px;
+                                    padding:3px;
+                                ">
 
-                            <br>
+                                <br>
 
-                            <b>{hoa}</b>
+                                <b>{hoa}</b>
 
                             </div>
                             """,
