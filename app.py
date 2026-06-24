@@ -1626,38 +1626,29 @@ if st.session_state.quyen == "hoi":
             )
 
 
-            tim_tv = st.text_input(
-                "🔍 Tìm hội viên",
-                placeholder="Nhập tên hội viên..."
-            )
-
-
-            if tim_tv.strip():
-
-                danh_sach_tv = [
-                    tv
-                    for tv in danh_sach_tv
-                    if tim_tv.lower()
-                    in tv.lower()
-                ]
-
-
             bang_tv = []
 
 
             for tv in danh_sach_tv:
 
-
                 dem = {
+
                     "Đỏ":0,
                     "Cam":0,
                     "Tím":0,
                     "Xanh dương":0,
                     "Xanh lá":0
+
                 }
 
 
-                for hoa in du_lieu_hoi_dang_dung.get(tv, []):
+                ds_hoa_tv = du_lieu_hoi_dang_dung.get(
+                    tv,
+                    []
+                )
+
+
+                for hoa in ds_hoa_tv:
 
                     mau = (
                         st.session_state
@@ -1672,14 +1663,11 @@ if st.session_state.quyen == "hoi":
                         dem[mau] += 1
 
 
-                tong = sum(dem.values())
-
-
                 bang_tv.append({
 
-                    "👤 Hội viên": tv,
+                    "👤 Hội viên": str(tv),
 
-                    "🌸 Tổng": tong,
+                    "🌸 Tổng": len(ds_hoa_tv),
 
                     "🔴 Đỏ": dem["Đỏ"],
 
@@ -1687,17 +1675,17 @@ if st.session_state.quyen == "hoi":
 
                     "🟣 Tím": dem["Tím"],
 
-                    "🔵 Xanh": dem["Xanh dương"],
+                    "🔵 Xanh dương": dem["Xanh dương"],
 
-                    "🟢 Lá": dem["Xanh lá"]
+                    "🟢 Xanh lá": dem["Xanh lá"]
 
                 })
 
 
             st.dataframe(
                 bang_tv,
-                use_container_width=True,
-                hide_index=True
+                hide_index=True,
+                use_container_width=True
             )
 if st.session_state.quyen != "admin":
     with tab_xep_hang:
