@@ -1457,215 +1457,79 @@ if st.session_state.quyen == "hoi":
                             if luu_du_lieu():
                                 st.rerun()
         with tab_cap_nhanh:
-
             st.markdown("## 🪷 Cấp Hoa Cho Hội Viên")
-
-
-            danh_sach_tv = [
-                x for x in du_lieu_hoi_dang_dung.keys()
-                if not x.startswith("_")
-            ]
-
-
-            tv_chon = st.selectbox(
-                "👤 Chọn hội viên",
-                ["-- Chọn --"] + danh_sach_tv,
-                key="chon_tv_cap_nhanh"
-            )
-
+            
+            # [PHẦN CHỌN HỘI VIÊN GIỮ NGUYÊN NHƯ CŨ]
+            danh_sach_tv = [x for x in du_lieu_hoi_dang_dung.keys() if not x.startswith("_")]
+            tv_chon = st.selectbox("👤 Chọn hội viên", ["-- Chọn --"] + danh_sach_tv, key="chon_tv_cap_nhanh")
 
             if tv_chon != "-- Chọn --":
+                # ... (giữ lại logic lọc hoa như cũ của bạn: danh_sach_hoa = ...)
 
-
-                hoa_da_co = du_lieu_hoi_dang_dung.get(
-                    tv_chon,
-                    []
-                )
-
-
-                danh_sach_hoa_goc = [
-                    hoa
-                    for hoa in st.session_state.kho_hoa_tong.keys()
-                    if hoa not in hoa_da_co
-                ]
-
-
-                # =====================
-                # ĐẾM CẤP HOA
-                # =====================
-
-                dem_cap = {
-                    "Đỏ":0,
-                    "Cam":0,
-                    "Tím":0,
-                    "Xanh dương":0,
-                    "Xanh lá":0
-                }
-
-
-                for hoa in danh_sach_hoa_goc:
-
-                    cap = (
-                        st.session_state.kho_hoa_tong
-                        .get(hoa,{})
-                        .get("cap")
-                    )
-
-                    if cap in dem_cap:
-                        dem_cap[cap] += 1
-
-
-
-                mau_chon = st.radio(
-                    "🌈 Loại hoa",
-                    [
-                        f"🌸 Tất cả: {len(danh_sach_hoa_goc)}",
-                        f"🔴 Đỏ: {dem_cap['Đỏ']}",
-                        f"🟠 Cam: {dem_cap['Cam']}",
-                        f"🟣 Tím: {dem_cap['Tím']}",
-                        f"🔵 Xanh dương: {dem_cap['Xanh dương']}",
-                        f"🟢 Xanh lá: {dem_cap['Xanh lá']}"
-                    ],
-                    horizontal=True,
-                    key="loc_mau_cap_hoa"
-                )
-
-
-                danh_sach_hoa = danh_sach_hoa_goc.copy()
-
-
-                if "Tất cả" not in mau_chon:
-
-
-                    ten_mau = (
-                        mau_chon
-                        .split(":")[0]
-                        .replace("🔴 ","")
-                        .replace("🟠 ","")
-                        .replace("🟣 ","")
-                        .replace("🔵 ","")
-                        .replace("🟢 ","")
-                    )
-
-
-                    danh_sach_hoa = [
-
-                        hoa for hoa in danh_sach_hoa
-
-                        if st.session_state.kho_hoa_tong
-                        .get(hoa,{})
-                        .get("cap") == ten_mau
-
-                    ]
-
-
-
-                st.markdown("### 🌸 Chọn hoa")
-
-
-                hoa_chon = []
-
-
-                # =====================
-                # KHUNG CUỘN HOA (ĐÃ FIX LỖI GIAO DIỆN)
-                # =====================
-
-                # Áp dụng CSS toàn cục để st.markdown có thể nhận class flower-box, cap-do...
-                st.markdown(GRID_STYLE, unsafe_allow_html=True)
+                # --- BẮT ĐẦU ĐOẠN HIỂN THỊ MỚI (DỄ NHẤT) ---
                 
-                with st.container():
-                    # Thay thế phần hiển thị danh sách hoa bằng đoạn này
-                    st.markdown("""
-                    <style>
-                    .custom-grid {
-                        display: grid;
-                        grid-template-columns: repeat(6, 1fr);
-                        gap: 10px;
+                # 1. Định nghĩa CSS Grid cứng
+                st.markdown("""
+                <style>
+                .grid-container {
+                    display: grid;
+                    grid-template-columns: repeat(6, 1fr); /* 6 cột trên máy tính */
+                    gap: 10px;
+                }
+                @media (max-width: 600px) {
+                    .grid-container {
+                        grid-template-columns: repeat(3, 1fr) !important; /* Luôn 3 cột trên ĐT */
                     }
-                    @media (max-width: 600px) {
-                        .custom-grid {
-                            grid-template-columns: repeat(3, 1fr) !important;
-                        }
-                    }
-                    .hoa-item {
-                        text-align: center;
-                        border: 1px solid #444;
-                        border-radius: 10px;
-                        padding: 5px;
-                        background: rgba(255,255,255,0.1);
-                    }
-                    </style>
-                    <div class="custom-grid">
-                    """, unsafe_allow_html=True)
+                }
+                .grid-item {
+                    text-align: center;
+                    width: 100%;
+                }
+                </style>
+                """, unsafe_allow_html=True)
+
+                # 2. Tạo form để bọc toàn bộ
+                with st.form("form_chon_hoa"):
+                    st.markdown('<div class="grid-container">', unsafe_allow_html=True)
                     
-                    # Dùng st.form để xử lý việc chọn nhiều hoa cùng lúc
-                    with st.form("form_chon_hoa"):
-                        for hoa in danh_sach_hoa:
-                            thong_tin = st.session_state.kho_hoa_tong.get(hoa, {})
-                            link_anh = anh_html(thong_tin.get("anh"))
-                            
-                            st.markdown(f'''
-                            <div class="hoa-item">
-                                <img src="{link_anh}" style="width:100%; border-radius:5px;">
-                                <div style="font-size:11px; margin-top:2px;">{hoa}</div>
-                                <input type="checkbox" name="chon_{hoa}" value="{hoa}">
-                            </div>
-                            ''', unsafe_allow_html=True)
+                    hoa_chon = []
+                    for hoa in danh_sach_hoa:
+                        thong_tin = st.session_state.kho_hoa_tong.get(hoa, {})
+                        link_anh = anh_html(thong_tin.get("anh"))
+                        mau_cap = {"Xanh lá": "cap-xanh-la", "Xanh dương": "cap-xanh-duong", 
+                                   "Tím": "cap-tim", "Cam": "cap-cam", "Đỏ": "cap-do"}.get(thong_tin.get("cap"), "cap-do")
                         
-                        submitted = st.form_submit_button("🌺 Hoàn thành")
-                    
+                        # Hiển thị từng bông hoa
+                        st.markdown(f'''
+                        <div class="grid-item">
+                            <img class="{mau_cap}" src="{link_anh}" style="width:100%; border-radius:10px;">
+                            <div style="font-size:11px; font-weight:bold;">{hoa}</div>
+                        </div>
+                        ''', unsafe_allow_html=True)
+                        
+                        # Checkbox nằm ngay dưới ảnh
+                        if st.checkbox("Chọn", key=f"cap_{tv_chon}_{hoa}"):
+                            hoa_chon.append(hoa)
+                            
                     st.markdown('</div>', unsafe_allow_html=True)
-                # =====================
-                # LƯU
-                # =====================
+                    
+                    # Nút submit cuối form
+                    submitted = st.form_submit_button("🌺 Hoàn thành cấp hoa")
 
-
-                if st.button(
-                    "🌺 Hoàn thành",
-                    use_container_width=True
-                ):
-
-
+                # 3. Xử lý sau khi nhấn nút
+                if submitted:
                     if len(hoa_chon) == 0:
-
-
-                        st.warning(
-                            "⚠️ Chưa chọn hoa"
-                        )
-
-
+                        st.warning("⚠️ Chưa chọn hoa nào!")
                     else:
-
-
                         for hoa in hoa_chon:
-
-
                             if hoa not in du_lieu_hoi_dang_dung[tv_chon]:
-
-                                du_lieu_hoi_dang_dung[tv_chon].append(
-                                    hoa
-                                )
-
-
+                                du_lieu_hoi_dang_dung[tv_chon].append(hoa)
                         if luu_du_lieu():
-
-
-                            st.success(
-                                f"✅ Đã thêm {len(hoa_chon)} hoa cho {tv_chon}"
-                            )
-
-
+                            st.success(f"✅ Đã thêm {len(hoa_chon)} hoa cho {tv_chon}")
                             st.rerun()
-
-
-
+                # --- KẾT THÚC ĐOẠN MỚI ---
             else:
-
-
-                st.info(
-                    "👆 Chọn hội viên để cấp hoa"
-                )
-
+                st.info("👆 Chọn hội viên để cấp hoa")
         with tab_ds_tv:
 
             st.markdown("## 📋 Danh sách hội viên")
