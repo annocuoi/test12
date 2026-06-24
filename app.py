@@ -1499,8 +1499,8 @@ if st.session_state.quyen == "hoi":
                             if luu_du_lieu():
                                 st.success("✅ Thành công!")
                                 st.rerun()
-            else:
-                st.info("👆 Chọn hội viên để cấp hoa")
+                else:
+                    st.info("👆 Chọn hội viên để cấp hoa")
                 # =====================
                 # LƯU
                 # =====================
