@@ -1552,67 +1552,63 @@ if st.session_state.quyen == "hoi":
 
 
                 # =====================
-                # KHUNG CUỘN HOA
+                # KHUNG CUỘN HOA NHẸ
                 # =====================
 
-                with st.container(height=600):
+                with st.container(height=650):
 
-                    for hoa in danh_sach_hoa:
+                    cols = st.columns(4)
 
+                    for i, hoa in enumerate(danh_sach_hoa):
 
-                        thong_tin = (
-                            st.session_state
-                            .kho_hoa_tong
-                            .get(hoa,{})
-                        )
+                        with cols[i % 4]:
 
 
-                        anh = thong_tin.get("anh")
-                        cap = thong_tin.get("cap")
-
-
-                        mau = {
-                            "Đỏ":"🔴",
-                            "Cam":"🟠",
-                            "Tím":"🟣",
-                            "Xanh dương":"🔵",
-                            "Xanh lá":"🟢"
-                        }.get(cap,"⚪")
-
-
-                        cot1, cot2, cot3 = st.columns(
-                            [1,2,7]
-                        )
-
-
-                        with cot1:
-
-                            chon = st.checkbox(
-                                "",
-                                key=f"cap_{tv_chon}_{hoa}"
+                            thong_tin = (
+                                st.session_state
+                                .kho_hoa_tong
+                                .get(hoa,{})
                             )
 
 
-                        with cot2:
+                            cap = thong_tin.get("cap")
 
-                            st.image(
-                                anh,
-                                width=60
+
+                            mau_chu = {
+
+                                "Đỏ":"#ff0000",
+                                "Cam":"#ff8800",
+                                "Tím":"#9b00ff",
+                                "Xanh dương":"#0066ff",
+                                "Xanh lá":"#009900"
+
+                            }.get(
+                                cap,
+                                "#000000"
                             )
 
-
-                        with cot3:
 
                             st.markdown(
                                 f"""
-                                ### {mau} {hoa}
-                                """
+                                <div style="
+                                    color:{mau_chu};
+                                    font-weight:bold;
+                                    font-size:17px;
+                                    height:45px;
+                                ">
+                                🌸 {hoa}
+                                </div>
+                                """,
+                                unsafe_allow_html=True
                             )
 
 
-                        if chon:
+                            if st.checkbox(
+                                "Chọn",
+                                key=f"cap_{tv_chon}_{hoa}"
+                            ):
 
-                            hoa_chon.append(hoa)
+                                hoa_chon.append(hoa)
 
                 # =====================
                 # LƯU
