@@ -1386,19 +1386,6 @@ if st.session_state.quyen == "hoi":
         with tab_cap_phat:
 
             st.markdown("## 👥 2. Hội Viên & Cấp Phát")
-
-        with tab_cap_nhanh:
-
-            st.markdown("## 🌸 Cấp nhanh hoa")
-
-            st.info("Chức năng cấp nhanh để thêm sau")
-
-
-        with tab_ds_tv:
-
-            st.markdown("## 📋 Danh sách hội viên")
-
-            st.info("Danh sách hội viên để thêm sau")
         # =====================
         # BÊN TRÁI: HỘI VIÊN
         # =====================
@@ -1574,6 +1561,18 @@ if st.session_state.quyen == "hoi":
                 st.info(
                     "✅ Các hội viên đã có tất cả hoa"
                 )
+        with tab_cap_nhanh:
+
+            st.markdown("## 🌸 Cấp nhanh hoa")
+
+            st.info("Chức năng cấp nhanh để thêm sau")
+
+
+        with tab_ds_tv:
+
+            st.markdown("## 📋 Danh sách hội viên")
+
+            st.info("Danh sách hội viên để thêm sau")
 if st.session_state.quyen != "admin":
     with tab_xep_hang:
 
