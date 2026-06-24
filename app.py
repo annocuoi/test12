@@ -441,8 +441,8 @@ if "GITHUB_TOKEN" in st.secrets:
 else:
     GITHUB_TOKEN = ""
 
-REPO_NAME = "annocuoi/Hoa-vien-online"
-FILE_PATH = "du_lieu_hoa1.json"
+REPO_NAME = "annocuoi/test12"
+FILE_PATH = "du_lieu_chung.json"
 BRANCH = "main"
 
 HEADERS = {
