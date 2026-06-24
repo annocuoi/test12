@@ -1574,21 +1574,21 @@ if st.session_state.quyen == "hoi":
 
                             mau_chu = {
 
-                                "Đỏ": "#ff0000",
-                                "Cam": "#ff8800",
-                                "Tím": "#9b00ff",
-                                "Xanh dương": "#0066ff",
-                                "Xanh lá": "#00aa00"
+                                "Đỏ": "red",
+                                "Cam": "orange",
+                                "Tím": "purple",
+                                "Xanh dương": "blue",
+                                "Xanh lá": "green"
 
                             }.get(cap,"black")
 
 
-                            col_tick, col_ten = st.columns(
-                                [1,5]
+                            cot_tick, cot_chu = st.columns(
+                                [0.25, 3]
                             )
 
 
-                            with col_tick:
+                            with cot_tick:
 
                                 tick = st.checkbox(
                                     "",
@@ -1596,17 +1596,17 @@ if st.session_state.quyen == "hoi":
                                 )
 
 
-                            with col_ten:
+                            with cot_chu:
 
                                 st.markdown(
                                     f"""
                                     <div style="
                                         color:{mau_chu};
-                                        font-weight:bold;
+                                        font-weight:700;
                                         font-size:16px;
-                                        padding-top:6px;
+                                        margin-top:6px;
                                     ">
-                                        {hoa}
+                                    {hoa}
                                     </div>
                                     """,
                                     unsafe_allow_html=True
