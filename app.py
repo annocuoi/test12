@@ -1475,6 +1475,39 @@ if st.session_state.quyen == "hoi":
                 ]
 
 
+                mau_chon = st.selectbox(
+                    "🌈 Loại hoa",
+                    [
+                        "🌸 Tất cả",
+                        "🔴 Đỏ",
+                        "🟠 Cam",
+                        "🟣 Tím",
+                        "🔵 Xanh dương",
+                        "🟢 Xanh lá"
+                    ],
+                    key="loc_mau_cap_hoa"
+                )
+
+
+                if mau_chon != "🌸 Tất cả":
+
+                    ten_mau = (
+                        mau_chon
+                        .replace("🔴 ", "")
+                        .replace("🟠 ", "")
+                        .replace("🟣 ", "")
+                        .replace("🔵 ", "")
+                        .replace("🟢 ", "")
+                    )
+
+
+                    danh_sach_hoa = [
+                        hoa
+                        for hoa in danh_sach_hoa
+                        if st.session_state.kho_hoa_tong[hoa]["mau"] == ten_mau
+                    ]
+
+
                 st.markdown("### 🌸 Chọn hoa")
 
 
@@ -1483,7 +1516,6 @@ if st.session_state.quyen == "hoi":
 
                 # chia 4 cột
                 cols = st.columns(4)
-
 
                 for i, hoa in enumerate(danh_sach_hoa):
 
