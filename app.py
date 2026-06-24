@@ -1574,51 +1574,47 @@ if st.session_state.quyen == "hoi":
                 st.markdown(GRID_STYLE, unsafe_allow_html=True)
                 
                 with st.container():
-                    # CSS Grid cứng cho toàn bộ các thiết bị
+                    # Thay thế phần hiển thị danh sách hoa bằng đoạn này
                     st.markdown("""
-                        <style>
+                    <style>
+                    .custom-grid {
+                        display: grid;
+                        grid-template-columns: repeat(6, 1fr);
+                        gap: 10px;
+                    }
+                    @media (max-width: 600px) {
                         .custom-grid {
-                            display: grid;
-                            grid-template-columns: repeat(6, 1fr);
-                            gap: 12px;
-                            padding: 5px;
+                            grid-template-columns: repeat(3, 1fr) !important;
                         }
-                        /* Ép đúng 3 cột trên điện thoại */
-                        @media (max-width: 600px) {
-                            .custom-grid {
-                                grid-template-columns: repeat(3, 1fr) !important;
-                            }
-                        }
-                        </style>
-                        <div class="custom-grid">
-                        """, unsafe_allow_html=True)
-        
+                    }
+                    .hoa-item {
+                        text-align: center;
+                        border: 1px solid #444;
+                        border-radius: 10px;
+                        padding: 5px;
+                        background: rgba(255,255,255,0.1);
+                    }
+                    </style>
+                    <div class="custom-grid">
+                    """, unsafe_allow_html=True)
+                    
+                    # Dùng st.form để xử lý việc chọn nhiều hoa cùng lúc
+                    with st.form("form_chon_hoa"):
                         for hoa in danh_sach_hoa:
                             thong_tin = st.session_state.kho_hoa_tong.get(hoa, {})
-                            mau_cap = {
-                                "Xanh lá": "cap-xanh-la", 
-                                "Xanh dương": "cap-xanh-duong", 
-                                "Tím": "cap-tim", 
-                                "Cam": "cap-cam", 
-                                "Đỏ": "cap-do"
-                            }.get(thong_tin.get("cap"), "cap-do")
-        
                             link_anh = anh_html(thong_tin.get("anh"))
                             
-                            # In HTML trực tiếp để đảm bảo cấu trúc không bị Streamlit can thiệp
                             st.markdown(f'''
-                            <div style="text-align: center;">
-                                <img class="{mau_cap}" src="{link_anh}" style="width:100%; border-radius:10px; display:block;">
-                                <div style="font-size:12px; font-weight:bold; margin-top:4px;">{hoa}</div>
+                            <div class="hoa-item">
+                                <img src="{link_anh}" style="width:100%; border-radius:5px;">
+                                <div style="font-size:11px; margin-top:2px;">{hoa}</div>
+                                <input type="checkbox" name="chon_{hoa}" value="{hoa}">
                             </div>
                             ''', unsafe_allow_html=True)
-                            
-                            # Checkbox đi kèm
-                            if st.checkbox("Chọn", key=f"cap_{tv_chon}_{hoa}"):
-                                hoa_chon.append(hoa)
+                        
+                        submitted = st.form_submit_button("🌺 Hoàn thành")
                     
-                        st.markdown('</div>', unsafe_allow_html=True)
-
+                    st.markdown('</div>', unsafe_allow_html=True)
                 # =====================
                 # LƯU
                 # =====================
