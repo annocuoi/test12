@@ -1535,16 +1535,54 @@ if st.session_state.quyen == "hoi":
                         )
 
 
-                        if anh:
+                        cap = thong_tin.get(
+                            "cap",
+                            ""
+                        )
 
-                            st.image(
-                                anh,
-                                width=80
-                            )
+
+                        mau_vien = {
+                            "Đỏ": "#ff4b4b",
+                            "Cam": "#ff8c00",
+                            "Tím": "#9b59b6",
+                            "Xanh dương": "#3498db",
+                            "Xanh lá": "#2ecc71"
+                        }.get(
+                            cap,
+                            "#cccccc"
+                        )
+
+
+                        st.markdown(
+                            f"""
+                            <div style="
+                                border:3px solid {mau_vien};
+                                border-radius:15px;
+                                padding:8px;
+                                text-align:center;
+                                background:rgba(255,255,255,0.35);
+                                margin-bottom:5px;
+                            ">
+
+                            <img src="{anh}" 
+                            style="
+                                width:80px;
+                                height:80px;
+                                object-fit:contain;
+                            ">
+
+                            <br>
+
+                            <b>{hoa}</b>
+
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
 
 
                         if st.checkbox(
-                            hoa,
+                            "Chọn",
                             key=f"hoa_{tv_chon}_{hoa}"
                         ):
 
