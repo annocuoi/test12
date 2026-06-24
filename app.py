@@ -367,6 +367,25 @@ html, body{
 .member-count{
     font-size:10px;
 }
+.ten-cap-do {
+    color:#ff0000 !important;
+}
+
+.ten-cap-cam {
+    color:#ff8800 !important;
+}
+
+.ten-cap-tim {
+    color:#9b00ff !important;
+}
+
+.ten-cap-xanhduong {
+    color:#0066ff !important;
+}
+
+.ten-cap-xanhla {
+    color:#00aa00 !important;
+}
 
 
 </style>
@@ -1572,16 +1591,13 @@ if st.session_state.quyen == "hoi":
 
                             cap = thong_tin.get("cap")
 
-
-                            mau_chu = {
-
-                                "Đỏ": "#ff0000",
-                                "Cam": "#ff8800",
-                                "Tím": "#9b00ff",
-                                "Xanh dương": "#0066ff",
-                                "Xanh lá": "#00aa00"
-
-                            }.get(cap,"black")
+                            class_mau = {
+                                "Đỏ": "ten-cap-do",
+                                "Cam": "ten-cap-cam",
+                                "Tím": "ten-cap-tim",
+                                "Xanh dương": "ten-cap-xanhduong",
+                                "Xanh lá": "ten-cap-xanhla"
+                            }.get(cap,"")
 
 
                             cot_tick, cot_chu = st.columns(
@@ -1601,10 +1617,9 @@ if st.session_state.quyen == "hoi":
 
                                 st.markdown(
                                     f"""
-                                    <div class="ten-hoa-mau"
+                                    <div class="{class_mau}"
                                     style="
-                                        color:{mau_chu} !important;
-                                        font-weight:900 !important;
+                                        font-weight:900;
                                         font-size:16px;
                                         margin-top:5px;
                                         white-space:nowrap;
