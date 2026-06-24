@@ -1513,79 +1513,81 @@ if st.session_state.quyen == "hoi":
 
                 st.markdown("### 🌸 Chọn hoa")
 
-
                 hoa_chon = []
 
 
-                # chia 4 cột
-                cols = st.columns(4)
+                # tạo khung kéo
+                with st.container(height=600):
+
+                    cols = st.columns(3)
+
+                    for i, hoa in enumerate(danh_sach_hoa):
+
+                        with cols[i % 3]:
+
+                            thong_tin = st.session_state.kho_hoa_tong.get(
+                                hoa,
+                                {}
+                            )
+
+                            anh = thong_tin.get("anh")
+                            cap = thong_tin.get("cap")
 
 
-                for i, hoa in enumerate(danh_sach_hoa):
+                            mau_vien = {
+                                "Đỏ": "#ff4b4b",
+                                "Cam": "#ff8c00",
+                                "Tím": "#9b59b6",
+                                "Xanh dương": "#0066ff",
+                                "Xanh lá": "#00aa00"
+                            }.get(cap, "#cccccc")
 
-                    with cols[i % 4]:
 
-                        thong_tin = st.session_state.kho_hoa_tong.get(
-                            hoa,
-                            {}
-                        )
+                            if isinstance(anh, bytes):
 
-                        anh = thong_tin.get(
-                            "anh"
-                        )
-                        if isinstance(anh, bytes):
+                                anh = (
+                                    "data:image/png;base64,"
+                                    +
+                                    base64.b64encode(anh).decode()
+                                )
 
-                            anh = (
-                                "data:image/png;base64,"
-                                +
-                                base64.b64encode(anh).decode()
+
+                            st.markdown(
+                                f"""
+                                <div style="
+                                    text-align:center;
+                                    margin-bottom:8px;
+                                ">
+
+                                    <img src="{anh}"
+                                    style="
+                                    width:95px;
+                                    height:95px;
+                                    object-fit:cover;
+                                    border:5px solid {mau_vien};
+                                    border-radius:12px;
+                                    ">
+
+                                    <div style="
+                                    font-weight:bold;
+                                    font-size:16px;
+                                    margin-top:5px;
+                                    ">
+                                    {hoa}
+                                    </div>
+
+                                </div>
+                                """,
+                                unsafe_allow_html=True
                             )
 
 
-                        cap = thong_tin.get(
-                            "cap",
-                            ""
-                        )
+                            if st.checkbox(
+                                "Chọn",
+                                key=f"hoa_{tv_chon}_{hoa}"
+                            ):
 
-
-                        mau_vien = {
-                            "Đỏ": "#ff4b4b",
-                            "Cam": "#ff8c00",
-                            "Tím": "#9b59b6",
-                            "Xanh dương": "#3498db",
-                            "Xanh lá": "#2ecc71"
-                        }.get(
-                            cap,
-                            "#cccccc"
-                        )
-
-
-                        st.markdown(
-                            f"""
-                            <center>
-
-                            <img 
-                            src='{anh}'
-                            width='85'
-                            height='85'
-                            style='border:5px solid {mau_vien};border-radius:10px;padding:3px;'>
-
-                            <br>
-
-                            <b>{hoa}</b>
-
-                            </center>
-                            """,
-                            unsafe_allow_html=True
-                        )
-
-
-                        if st.checkbox(
-                            "Chọn",
-                            key=f"hoa_{tv_chon}_{hoa}"
-                        ):
-
-                            hoa_chon.append(hoa)
+                                hoa_chon.append(hoa)
 
 
 
