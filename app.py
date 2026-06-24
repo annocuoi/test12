@@ -441,8 +441,8 @@ if "GITHUB_TOKEN" in st.secrets:
 else:
     GITHUB_TOKEN = ""
 
-REPO_NAME = "annocuoi/test12"
-FILE_PATH = "du_lieu_chung.json"
+REPO_NAME = "annocuoi/Hoa-vien-online"
+FILE_PATH = "du_lieu_hoa1.json"
 BRANCH = "main"
 
 HEADERS = {
@@ -1450,33 +1450,25 @@ if st.session_state.quyen == "hoi":
 
             st.markdown("## 🪷 Thêm Hoa Cho Hội Viên")
 
-            danh_sach_tv = (
-                ["-- Chọn --"]
-                +
-                [
-                    x for x in du_lieu_hoi_dang_dung.keys()
-                    if not x.startswith("_")
-                ]
+            danh_sach_tv = [
+                x for x in du_lieu_hoi_dang_dung.keys()
+                if not x.startswith("_")
+            ]
+
+            ds_tv_chon = st.multiselect(
+                "👥 Chọn hội viên",
+                danh_sach_tv
             )
 
 
-            tv_chon = st.selectbox(
-                "👤 Chọn hội viên",
-                danh_sach_tv,
-                key="cap_tv"
-            )
+            # lấy danh sách hoa đã có của những người chọn
+            hoa_da_co = []
 
-            # lấy hoa hội viên đang có
-            if tv_chon == "-- Chọn --":
-
-                hoa_da_co = []
-
-            else:
-
-                hoa_da_co = du_lieu_hoi_dang_dung.get(
-                    tv_chon,
-                    []
+            for tv in ds_tv_chon:
+                hoa_da_co.extend(
+                    du_lieu_hoi_dang_dung.get(tv, [])
                 )
+
 
             # lọc hoa chưa có
             hoa_chua_co = [
@@ -1494,8 +1486,10 @@ if st.session_state.quyen == "hoi":
                     key="cap_hoa"
                 )
 
+
                 if "dang_them_hoa" not in st.session_state:
                     st.session_state.dang_them_hoa = False
+
 
                 if st.button(
                     "🌺 Thêm Hoa",
@@ -1505,26 +1499,51 @@ if st.session_state.quyen == "hoi":
 
                     st.session_state.dang_them_hoa = True
 
-                    if not tv_chon or tv_chon == "-- Chọn --":
-                        st.warning("⚠️ Vui lòng tạo hoặc chọn hội viên trước")
 
-                    elif hoa_chon == "-- Chọn hoa --":
-                        st.warning("⚠️ Vui lòng chọn hoa")
+                    if not ds_tv_chon:
+
+                        st.warning(
+                            "⚠️ Vui lòng chọn hội viên trước"
+                        )
+
+                        st.session_state.dang_them_hoa = False
+
+
+                    elif not hoa_chon:
+
+                        st.warning(
+                            "⚠️ Vui lòng chọn hoa"
+                        )
+
+                        st.session_state.dang_them_hoa = False
+
 
                     else:
-                        du_lieu_hoi_dang_dung[tv_chon].append(
-                            hoa_chon
-                        )
+
+                        so_luong = 0
+
+                        for tv in ds_tv_chon:
+
+                            # tránh thêm trùng hoa
+                            if hoa_chon not in du_lieu_hoi_dang_dung[tv]:
+
+                                du_lieu_hoi_dang_dung[tv].append(
+                                    hoa_chon
+                                )
+
+                                so_luong += 1
+
 
                         if luu_du_lieu():
 
                             st.success(
-                                "✅ Đã thêm hoa"
+                                f"✅ Đã thêm hoa cho {so_luong} hội viên"
                             )
 
                             st.session_state.dang_them_hoa = False
 
                             st.rerun()
+
 
                         else:
 
@@ -1533,9 +1552,13 @@ if st.session_state.quyen == "hoi":
                             st.error(
                                 "❌ Lưu thất bại, kiểm tra mạng"
                             )
+
+
             else:
 
-                st.info("✅ Hội viên đã có tất cả hoa")
+                st.info(
+                    "✅ Các hội viên đã có tất cả hoa"
+                )
 if st.session_state.quyen != "admin":
     with tab_xep_hang:
 
