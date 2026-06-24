@@ -1613,7 +1613,92 @@ if st.session_state.quyen == "hoi":
 
             st.markdown("## 📋 Danh sách hội viên")
 
-            st.info("Danh sách hội viên để thêm sau")
+
+            danh_sach_tv = [
+                tv
+                for tv in du_lieu_hoi_dang_dung.keys()
+                if not tv.startswith("_")
+            ]
+
+
+            st.info(
+                f"👥 Tổng hội viên: {len(danh_sach_tv)}"
+            )
+
+
+            tim_tv = st.text_input(
+                "🔍 Tìm hội viên",
+                placeholder="Nhập tên hội viên..."
+            )
+
+
+            if tim_tv.strip():
+
+                danh_sach_tv = [
+                    tv
+                    for tv in danh_sach_tv
+                    if tim_tv.lower()
+                    in tv.lower()
+                ]
+
+
+            bang_tv = []
+
+
+            for tv in danh_sach_tv:
+
+
+                dem = {
+                    "Đỏ":0,
+                    "Cam":0,
+                    "Tím":0,
+                    "Xanh dương":0,
+                    "Xanh lá":0
+                }
+
+
+                for hoa in du_lieu_hoi_dang_dung.get(tv, []):
+
+                    mau = (
+                        st.session_state
+                        .kho_hoa_tong
+                        .get(hoa,{})
+                        .get("mau")
+                    )
+
+
+                    if mau in dem:
+
+                        dem[mau] += 1
+
+
+                tong = sum(dem.values())
+
+
+                bang_tv.append({
+
+                    "👤 Hội viên": tv,
+
+                    "🌸 Tổng": tong,
+
+                    "🔴 Đỏ": dem["Đỏ"],
+
+                    "🟠 Cam": dem["Cam"],
+
+                    "🟣 Tím": dem["Tím"],
+
+                    "🔵 Xanh": dem["Xanh dương"],
+
+                    "🟢 Lá": dem["Xanh lá"]
+
+                })
+
+
+            st.dataframe(
+                bang_tv,
+                use_container_width=True,
+                hide_index=True
+            )
 if st.session_state.quyen != "admin":
     with tab_xep_hang:
 
