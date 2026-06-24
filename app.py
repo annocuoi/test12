@@ -1468,135 +1468,200 @@ if st.session_state.quyen == "hoi":
                 )
 
 
-                danh_sach_hoa = [
+                danh_sach_hoa_goc = [
                     hoa
                     for hoa in st.session_state.kho_hoa_tong.keys()
                     if hoa not in hoa_da_co
                 ]
 
 
+                # =====================
+                # ĐẾM CẤP HOA
+                # =====================
+
+                dem_cap = {
+                    "Đỏ":0,
+                    "Cam":0,
+                    "Tím":0,
+                    "Xanh dương":0,
+                    "Xanh lá":0
+                }
+
+
+                for hoa in danh_sach_hoa_goc:
+
+                    cap = (
+                        st.session_state.kho_hoa_tong
+                        .get(hoa,{})
+                        .get("cap")
+                    )
+
+                    if cap in dem_cap:
+                        dem_cap[cap] += 1
+
+
+
                 mau_chon = st.radio(
                     "🌈 Loại hoa",
                     [
-                        "🌸 Tất cả",
-                        "🔴 Đỏ",
-                        "🟠 Cam",
-                        "🟣 Tím",
-                        "🔵 Xanh dương",
-                        "🟢 Xanh lá"
+                        f"🌸 Tất cả: {len(danh_sach_hoa_goc)}",
+                        f"🔴 Đỏ: {dem_cap['Đỏ']}",
+                        f"🟠 Cam: {dem_cap['Cam']}",
+                        f"🟣 Tím: {dem_cap['Tím']}",
+                        f"🔵 Xanh dương: {dem_cap['Xanh dương']}",
+                        f"🟢 Xanh lá: {dem_cap['Xanh lá']}"
                     ],
                     horizontal=True,
                     key="loc_mau_cap_hoa"
                 )
 
 
-                if mau_chon != "🌸 Tất cả":
+                danh_sach_hoa = danh_sach_hoa_goc.copy()
+
+
+                if "Tất cả" not in mau_chon:
+
 
                     ten_mau = (
                         mau_chon
-                        .replace("🔴 ", "")
-                        .replace("🟠 ", "")
-                        .replace("🟣 ", "")
-                        .replace("🔵 ", "")
-                        .replace("🟢 ", "")
+                        .split(":")[0]
+                        .replace("🔴 ","")
+                        .replace("🟠 ","")
+                        .replace("🟣 ","")
+                        .replace("🔵 ","")
+                        .replace("🟢 ","")
                     )
 
 
                     danh_sach_hoa = [
-                        hoa
-                        for hoa in danh_sach_hoa
+
+                        hoa for hoa in danh_sach_hoa
+
                         if st.session_state.kho_hoa_tong
-                        .get(hoa, {})
+                        .get(hoa,{})
                         .get("cap") == ten_mau
+
                     ]
+
 
 
                 st.markdown("### 🌸 Chọn hoa")
 
+
                 hoa_chon = []
 
 
-                # tạo khung kéo
-                with st.container(height=600):
+                # =====================
+                # KHUNG CUỘN HOA
+                # =====================
+
+                with st.container(height=650):
+
 
                     cols = st.columns(3)
 
+
                     for i, hoa in enumerate(danh_sach_hoa):
+
 
                         with cols[i % 3]:
 
-                            thong_tin = st.session_state.kho_hoa_tong.get(
-                                hoa,
-                                {}
+
+                            thong_tin = (
+                                st.session_state
+                                .kho_hoa_tong
+                                .get(hoa,{})
                             )
 
+
                             anh = thong_tin.get("anh")
+
                             cap = thong_tin.get("cap")
 
 
+
                             mau_vien = {
-                                "Đỏ": "#ff4b4b",
-                                "Cam": "#ff8c00",
-                                "Tím": "#9b59b6",
-                                "Xanh dương": "#0066ff",
-                                "Xanh lá": "#00aa00"
-                            }.get(cap, "#cccccc")
+
+                                "Đỏ":"#ff4b4b",
+                                "Cam":"#ff8800",
+                                "Tím":"#9b59b6",
+                                "Xanh dương":"#0066ff",
+                                "Xanh lá":"#00aa00"
+
+                            }.get(
+                                cap,
+                                "#cccccc"
+                            )
 
 
-                            # ===== HIỂN THỊ HOA =====
+
+                            if isinstance(anh, bytes):
+
+                                anh = (
+                                    "data:image/png;base64,"
+                                    +
+                                    base64
+                                    .b64encode(anh)
+                                    .decode()
+                                )
+
+
 
                             st.markdown(
                                 f"""
                                 <div style="
-                                    text-align:center;
+                                text-align:center;
+                                height:190px;
                                 ">
-                                """,
-                                unsafe_allow_html=True
-                            )
 
 
-                            st.image(
-                                anh,
-                                width=100
-                            )
-
-
-                            st.markdown(
-                                f"""
-                                <style>
-
-                                div[data-testid="stImage"] img {{
-
-                                    border:5px solid {mau_vien};
-                                    border-radius:12px;
-                                    padding:3px;
-
-                                }}
-
-                                </style>
+                                <img src="{anh}"
+                                style="
+                                width:100px;
+                                height:100px;
+                                object-fit:cover;
+                                border:5px solid {mau_vien};
+                                border-radius:12px;
+                                padding:3px;
+                                ">
 
 
                                 <div style="
-                                    text-align:center;
-                                    font-weight:bold;
-                                    font-size:16px;
-                                    margin-top:5px;
+                                height:50px;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                font-weight:bold;
+                                font-size:16px;
                                 ">
 
                                 {hoa}
 
                                 </div>
+
+
+                                </div>
+
                                 """,
                                 unsafe_allow_html=True
                             )
 
 
+
                             if st.checkbox(
                                 "Chọn",
-                                key=f"hoa_{tv_chon}_{hoa}"
+                                key=f"cap_{tv_chon}_{hoa}"
                             ):
 
-                                hoa_chon.append(hoa)
+                                hoa_chon.append(
+                                    hoa
+                                )
+
+
+
+                # =====================
+                # LƯU
+                # =====================
 
 
                 if st.button(
@@ -1607,6 +1672,7 @@ if st.session_state.quyen == "hoi":
 
                     if len(hoa_chon) == 0:
 
+
                         st.warning(
                             "⚠️ Chưa chọn hoa"
                         )
@@ -1614,22 +1680,31 @@ if st.session_state.quyen == "hoi":
 
                     else:
 
+
                         for hoa in hoa_chon:
 
-                            du_lieu_hoi_dang_dung[tv_chon].append(
-                                hoa
-                            )
+
+                            if hoa not in du_lieu_hoi_dang_dung[tv_chon]:
+
+                                du_lieu_hoi_dang_dung[tv_chon].append(
+                                    hoa
+                                )
 
 
                         if luu_du_lieu():
+
 
                             st.success(
                                 f"✅ Đã thêm {len(hoa_chon)} hoa cho {tv_chon}"
                             )
 
+
                             st.rerun()
 
+
+
             else:
+
 
                 st.info(
                     "👆 Chọn hội viên để cấp hoa"
