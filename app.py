@@ -1386,6 +1386,7 @@ if st.session_state.quyen == "hoi":
         with tab_cap_phat:
 
             st.markdown("## 👥 2. Hội Viên & Cấp Phát")
+            col_tv1, col_tv2 = st.columns(2)
         # =====================
         # BÊN TRÁI: HỘI VIÊN
         # =====================
