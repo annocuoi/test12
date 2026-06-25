@@ -568,9 +568,19 @@ if not st.session_state.da_dang_nhap:
         type="password",
         placeholder="Nhập mật khẩu..."
     )
+    tick_luu = storage.getItem(
+        "nho_tick_login"
+    )
+
+    if tick_luu == "1":
+        tick_mac_dinh = True
+    else:
+        tick_mac_dinh = False
+
+
     nho_dang_nhap = st.checkbox(
         "💾 Nhớ tài khoản và mật khẩu",
-        value=False
+        value=tick_mac_dinh
     )
 
 
@@ -640,6 +650,12 @@ if not st.session_state.da_dang_nhap:
             if nho_dang_nhap:
 
                 storage.setItem(
+                    "nho_tick_login",
+                    "1",
+                    key="luu_tick_login"
+                )
+
+                storage.setItem(
                     "nho_tai_khoan_login",
                     ten_dang_nhap,
                     key="luu_tk_login"
@@ -653,6 +669,12 @@ if not st.session_state.da_dang_nhap:
 
 
             else:
+
+                storage.setItem(
+                    "nho_tick_login",
+                    "0",
+                    key="bo_tick_login"
+                )
 
                 storage.deleteItem(
                     "nho_tai_khoan_login",
