@@ -594,6 +594,22 @@ if not st.session_state.da_dang_nhap:
 
         if dang_nhap_ok:
 
+
+            # =====================
+            # NHỚ ĐĂNG NHẬP MÁY NÀY
+            # =====================
+
+            storage.setItem(
+                "tai_khoan",
+                ten_dang_nhap
+            )
+
+            storage.setItem(
+                "mat_khau",
+                mat_khau_nhap
+            )
+
+
             st.session_state.da_dang_nhap = True
             st.session_state.quyen = quyen_login
 
