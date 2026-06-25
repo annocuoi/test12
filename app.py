@@ -623,7 +623,21 @@ if not st.session_state.da_dang_nhap:
                     key="luu_mk_login"
                 )
 
-                time.sleep(1)
+
+            else:
+
+                storage.deleteItem(
+                    "nho_tai_khoan_login",
+                    key="xoa_tk_login"
+                )
+
+                storage.deleteItem(
+                    "nho_mat_khau_login",
+                    key="xoa_mk_login"
+                )
+
+
+            time.sleep(1)
 
 
             st.session_state.da_dang_nhap = True
