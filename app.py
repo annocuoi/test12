@@ -522,13 +522,11 @@ if not st.session_state.da_dang_nhap:
     # nhớ tài khoản theo trình duyệt
     tk_luu = storage.getItem(
         "nho_tai_khoan_login",
-        key="doc_tk_login"
     ) or ""
 
 
     mk_luu = storage.getItem(
         "nho_mat_khau_login",
-        key="doc_mk_login"
     ) or ""
     ten_dang_nhap = st.text_input(
         "Tài khoản",
