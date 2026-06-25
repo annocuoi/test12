@@ -540,6 +540,10 @@ if not st.session_state.da_dang_nhap:
         type="password",
         placeholder="Nhập mật khẩu..."
     )
+    nho_dang_nhap = st.checkbox(
+        "💾 Nhớ tài khoản và mật khẩu",
+        value=False
+    )
 
 
     if st.button("🔐 Đăng Nhập", use_container_width=True):
@@ -605,21 +609,21 @@ if not st.session_state.da_dang_nhap:
             # NHỚ ĐĂNG NHẬP MÁY NÀY
             # =====================
 
-            storage.setItem(
-                "nho_tai_khoan_login",
-                ten_dang_nhap,
-                key="luu_tk_login"
-            )
+            if nho_dang_nhap:
 
-            storage.setItem(
-                "nho_mat_khau_login",
-                mat_khau_nhap,
-                key="luu_mk_login"
-            )
+                storage.setItem(
+                    "nho_tai_khoan_login",
+                    ten_dang_nhap,
+                    key="luu_tk_login"
+                )
 
+                storage.setItem(
+                    "nho_mat_khau_login",
+                    mat_khau_nhap,
+                    key="luu_mk_login"
+                )
 
-            # chờ trình duyệt lưu xong
-            time.sleep(1)
+                time.sleep(1)
 
 
             st.session_state.da_dang_nhap = True
