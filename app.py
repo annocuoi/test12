@@ -618,6 +618,10 @@ if not st.session_state.da_dang_nhap:
             )
 
 
+            # chờ trình duyệt lưu xong
+            time.sleep(1)
+
+
             st.session_state.da_dang_nhap = True
             st.session_state.quyen = quyen_login
 
