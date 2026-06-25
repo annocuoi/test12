@@ -520,8 +520,8 @@ def doc_du_lieu_hoi(ten_hoi):
 
 if not st.session_state.da_dang_nhap:
     # nhớ tài khoản theo trình duyệt
-    tk_luu = storage.getItem("tai_khoan") or ""
-    mk_luu = storage.getItem("mat_khau") or ""
+    tk_luu = storage.getItem("nho_tai_khoan_login") or ""
+    mk_luu = storage.getItem("nho_mat_khau_login") or ""
     ten_dang_nhap = st.text_input(
         "Tài khoản",
         value=tk_luu,
@@ -600,12 +600,12 @@ if not st.session_state.da_dang_nhap:
             # =====================
 
             storage.setItem(
-                "tai_khoan",
+                "nho_tai_khoan_login",
                 ten_dang_nhap
             )
 
             storage.setItem(
-                "mat_khau",
+                "nho_mat_khau_login",
                 mat_khau_nhap
             )
 
