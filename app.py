@@ -519,14 +519,18 @@ def doc_du_lieu_hoi(ten_hoi):
         return {}
 
 if not st.session_state.da_dang_nhap:
-
+    # nhớ tài khoản theo trình duyệt
+    tk_luu = storage.getItem("tai_khoan") or ""
+    mk_luu = storage.getItem("mat_khau") or ""
     ten_dang_nhap = st.text_input(
         "Tài khoản",
-        placeholder="Nhập tài khoản..."
+        value=tk_luu,
+        placeholder="Nhập tài khoản.."
     )
 
     mat_khau_nhap = st.text_input(
         "Mật khẩu",
+        value=mk_luu,
         type="password",
         placeholder="Nhập mật khẩu..."
     )
