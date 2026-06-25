@@ -520,40 +520,20 @@ def doc_du_lieu_hoi(ten_hoi):
 
 if not st.session_state.da_dang_nhap:
     st.markdown(
-        """
-        <div style="
-            text-align:center;
-            margin-top:40px;
-            margin-bottom:35px;
-        ">
+    """
+    <div style='text-align:center; margin-top:40px; margin-bottom:30px'>
 
-            <div style="
-                font-size:55px;
-            ">
-                🌸
-            </div>
+    <h1 style='font-size:42px'>
+    🌸 QUẢN LÝ HOA HỘI 🌸
+    </h1>
 
-            <div style="
-                font-size:36px;
-                font-weight:900;
-                color:#1e293b;
-                text-shadow:2px 2px 5px white;
-            ">
-                QUẢN LÝ HOA HỘI
-            </div>
+    <h4>
+    🌺 Bộ sưu tập • Hội viên • Xếp hạng 🌺
+    </h4>
 
-            <div style="
-                font-size:16px;
-                color:#334155;
-                font-weight:700;
-                margin-top:5px;
-            ">
-                🌺 Bộ sưu tập • Hội viên • Xếp hạng 🌺
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
+    </div>
+    """,
+    unsafe_allow_html=True
     )
     # nhớ tài khoản theo trình duyệt
     tk_luu = storage.getItem(
