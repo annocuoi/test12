@@ -519,6 +519,42 @@ def doc_du_lieu_hoi(ten_hoi):
         return {}
 
 if not st.session_state.da_dang_nhap:
+    st.markdown(
+        """
+        <div style="
+            text-align:center;
+            margin-top:40px;
+            margin-bottom:35px;
+        ">
+
+            <div style="
+                font-size:55px;
+            ">
+                🌸
+            </div>
+
+            <div style="
+                font-size:36px;
+                font-weight:900;
+                color:#1e293b;
+                text-shadow:2px 2px 5px white;
+            ">
+                QUẢN LÝ HOA HỘI
+            </div>
+
+            <div style="
+                font-size:16px;
+                color:#334155;
+                font-weight:700;
+                margin-top:5px;
+            ">
+                🌺 Bộ sưu tập • Hội viên • Xếp hạng 🌺
+            </div>
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     # nhớ tài khoản theo trình duyệt
     tk_luu = storage.getItem(
         "nho_tai_khoan_login",
