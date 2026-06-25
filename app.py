@@ -84,6 +84,10 @@ st.markdown(
         color:#000000;
         white-space:nowrap;
     }
+    /* Ẩn thanh công cụ dataframe */
+    div[data-testid="stElementToolbar"] {
+        display: none;
+    }
 
 
     /* icon hoa tự co */
@@ -325,6 +329,7 @@ html, body{
 .member-count{
     font-size:10px;
 }
+
 
 </style>
 """
@@ -1459,7 +1464,7 @@ if st.session_state.quyen == "hoi":
 
 
                 mau_chon = st.radio(
-                    "🌈 Loại hoa: (số đếm kế bên là số lượng hoa mà hv chưa có)",
+                    "🌈 Loại hoa: (Số đếm kế bên là số lượng hoa mà hv chưa có)",
                     [
                         f"🌸 Tất cả: {len(danh_sach_hoa_goc)}",
                         f"🔴 Đỏ: {dem_cap['Đỏ']}",
@@ -1530,6 +1535,8 @@ if st.session_state.quyen == "hoi":
                 with st.container(height=650):
 
                     cols = st.columns(4)
+                    if "hoa_dang_chon" not in st.session_state:
+                        st.session_state.hoa_dang_chon = []
 
                     for i, hoa in enumerate(danh_sach_hoa):
 
@@ -1543,21 +1550,51 @@ if st.session_state.quyen == "hoi":
 
                             cap = thong_tin.get("cap")
 
-                            icon = {
-                                "Đỏ":"🔴",
-                                "Cam":"🟠",
-                                "Tím":"🟣",
-                                "Xanh dương":"🔵",
-                                "Xanh lá":"🟢"
-                            }.get(cap,"")
+
+                            mau_chu = {
+
+                                "Đỏ": "#d60000",
+                                "Cam": "#ff6600",
+                                "Tím": "#8e44ad",
+                                "Xanh dương": "#005eff",
+                                "Xanh lá": "#009900"
+
+                            }.get(cap,"black")
 
                             tick = st.checkbox(
-                                f"{icon} {hoa}",
-                                key=f"chon_{tv_chon}_{hoa}"
+                                "",
+                                value=hoa in st.session_state.hoa_dang_chon,
+                                key=f"capnhanh_{tv_chon}_{hoa}"
                             )
 
+
+                            st.markdown(
+                                f"""
+                                <div style="
+                                    margin-top:-42px;
+                                    margin-left:35px;
+                                    color:{mau_chu};
+                                    font-weight:700;
+                                    font-size:16px;
+                                    white-space:nowrap;
+                                    height:35px;
+                                ">
+                                    {hoa}
+                                </div>
+                                """,
+                                unsafe_allow_html=True
+                            )
+
+
                             if tick:
-                                hoa_chon.append(hoa)
+
+                                if hoa not in st.session_state.hoa_dang_chon:
+                                    st.session_state.hoa_dang_chon.append(hoa)
+
+                            else:
+
+                                if hoa in st.session_state.hoa_dang_chon:
+                                    st.session_state.hoa_dang_chon.remove(hoa)
                 # =====================
                 # LƯU
                 # =====================
@@ -1569,7 +1606,7 @@ if st.session_state.quyen == "hoi":
                 ):
 
 
-                    if len(hoa_chon) == 0:
+                    if len(st.session_state.hoa_dang_chon) == 0:
 
 
                         st.warning(
@@ -1580,7 +1617,7 @@ if st.session_state.quyen == "hoi":
                     else:
 
 
-                        for hoa in hoa_chon:
+                        for hoa in st.session_state.hoa_dang_chon:
 
 
                             if hoa not in du_lieu_hoi_dang_dung[tv_chon]:
@@ -1592,10 +1629,22 @@ if st.session_state.quyen == "hoi":
 
                         if luu_du_lieu():
 
+                            so_hoa = len(st.session_state.hoa_dang_chon)
 
                             st.success(
-                                f"✅ Đã thêm {len(hoa_chon)} hoa cho {tv_chon}"
+                                f"✅ Đã thêm {so_hoa} hoa cho {tv_chon}"
                             )
+
+
+                            # =====================
+                            # XÓA TICK SAU KHI LƯU
+                            # =====================
+
+                            st.session_state.hoa_dang_chon = []
+
+                            for k in list(st.session_state.keys()):
+                                if k.startswith("capnhanh_"):
+                                    del st.session_state[k]
 
 
                             st.rerun()
