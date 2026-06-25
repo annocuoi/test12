@@ -7,6 +7,7 @@ import time
 from PIL import Image
 from datetime import datetime
 import io
+from streamlit_local_storage import LocalStorage
 
 # Cấu hình giao diện ứng dụng (phải nằm trước mọi lệnh st.)
 st.set_page_config(
@@ -20,6 +21,7 @@ st.set_page_config(
         "About": None
     }
 )
+storage = LocalStorage()
 st.markdown(
     """
     <style>
