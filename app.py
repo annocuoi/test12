@@ -521,15 +521,27 @@ def doc_du_lieu_hoi(ten_hoi):
 if not st.session_state.da_dang_nhap:
     st.markdown(
     """
-    <div style='text-align:center; margin-top:40px; margin-bottom:30px'>
+    <div style='
+        text-align:center;
+        margin-top:30px;
+        margin-bottom:25px;
+    '>
 
-    <h1 style='font-size:42px'>
+    <div style='
+        font-size:clamp(24px,5vw,42px);
+        font-weight:900;
+        white-space:nowrap;
+    '>
     🌸 QUẢN LÝ HOA HỘI 🌸
-    </h1>
+    </div>
 
-    <h4>
+    <div style='
+        font-size:clamp(12px,3vw,18px);
+        font-weight:700;
+        white-space:nowrap;
+    '>
     🌺 Bộ sưu tập • Hội viên • Xếp hạng 🌺
-    </h4>
+    </div>
 
     </div>
     """,
