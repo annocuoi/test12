@@ -1576,7 +1576,6 @@ if st.session_state.quyen == "hoi":
                 mau_chon = st.radio(
                     "",
                     [
-                        "🌸 Tất cả",
                         "🔴 Đỏ",
                         "🟠 Cam",
                         "🟣 Tím",
@@ -1584,6 +1583,7 @@ if st.session_state.quyen == "hoi":
                         "🟢 Xanh lá",
                     ],
                     horizontal=True,
+                    index=None,
                     label_visibility="collapsed",
                     key="loc_mau_cap_hoa"
                 )
@@ -1591,28 +1591,22 @@ if st.session_state.quyen == "hoi":
                 danh_sach_hoa = danh_sach_hoa_goc.copy()
 
 
-                if "Tất cả" not in mau_chon:
-
+                if mau_chon:
 
                     ten_mau = (
                         mau_chon
-                        .split(":")[0]
-                        .replace("🔴 ","")
-                        .replace("🟠 ","")
-                        .replace("🟣 ","")
-                        .replace("🔵 ","")
-                        .replace("🟢 ","")
+                        .replace("🔴 ", "")
+                        .replace("🟠 ", "")
+                        .replace("🟣 ", "")
+                        .replace("🔵 ", "")
+                        .replace("🟢 ", "")
                     )
 
-
                     danh_sach_hoa = [
-
                         hoa for hoa in danh_sach_hoa
-
                         if st.session_state.kho_hoa_tong
-                        .get(hoa,{})
-                        .get("cap") == ten_mau
-
+                            .get(hoa, {})
+                            .get("cap") == ten_mau
                     ]
                     # giữ danh sách gốc
                     danh_sach_hoa_goc = danh_sach_hoa.copy()
