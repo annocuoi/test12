@@ -1594,7 +1594,6 @@ if st.session_state.quyen == "hoi":
 
                 if "Tất cả" not in mau_chon:
 
-
                     ten_mau = (
                         mau_chon
                         .split(":")[0]
@@ -1605,7 +1604,6 @@ if st.session_state.quyen == "hoi":
                         .replace("🟢 ","")
                     )
 
-
                     danh_sach_hoa = [
 
                         hoa for hoa in danh_sach_hoa
@@ -1615,23 +1613,27 @@ if st.session_state.quyen == "hoi":
                         .get("cap") == ten_mau
 
                     ]
-                    # giữ danh sách gốc
-                    danh_sach_hoa_goc = danh_sach_hoa.copy()
-                    # 🔍 TÌM HOA
-                    tim_hoa = st.text_input(
-                        "🔍 Tìm hoa",
-                        placeholder="Nhập tên hoa...",
-                        key="tim_hoa_cap_nhanh"
-                    )
 
-                    if tim_hoa.strip():
+                # =====================
+                # 🔍 TÌM HOA
+                # =====================
 
-                        danh_sach_hoa = [
-                            hoa
-                            for hoa in danh_sach_hoa
-                            if tim_hoa.lower().strip()
-                            in hoa.lower()
-                        ]
+                tim_hoa = st.text_input(
+                    "🔍 Tìm hoa",
+                    placeholder="Nhập tên hoa...",
+                    key="tim_hoa_cap_nhanh"
+                )
+
+                if tim_hoa.strip():
+
+                    danh_sach_hoa = [
+
+                        hoa
+                        for hoa in danh_sach_hoa
+                        if tim_hoa.lower().strip()
+                        in hoa.lower()
+
+                    ]
 
 
                 st.markdown("### 🌸 Chọn hoa")
@@ -1650,21 +1652,19 @@ if st.session_state.quyen == "hoi":
                     if "hoa_dang_chon" not in st.session_state:
                         st.session_state.hoa_dang_chon = []
                     # Đưa hoa đã chọn lên đầu
-                    if mau_loc == "Tất cả":
-
-                        ds = danh_sach_hoa
-
-                    else:
-
-                        ds = [
-                            h for h in danh_sach_hoa
-                            if st.session_state.kho_hoa_tong[h]["cap"] == mau_loc
-                        ]
-
+                    # Đưa hoa đã chọn lên đầu
                     danh_sach_hien_thi = (
-                        [h for h in ds if h in st.session_state.hoa_dang_chon]
+                        [
+                            hoa
+                            for hoa in danh_sach_hoa
+                            if hoa in st.session_state.hoa_dang_chon
+                        ]
                         +
-                        [h for h in ds if h not in st.session_state.hoa_dang_chon]
+                        [
+                            hoa
+                            for hoa in danh_sach_hoa
+                            if hoa not in st.session_state.hoa_dang_chon
+                        ]
                     )
                     for i, hoa in enumerate(danh_sach_hien_thi):
 
