@@ -1640,7 +1640,11 @@ if st.session_state.quyen == "hoi":
                             in hoa.lower()
                         ]
 
-
+                bam_hoan_thanh = st.button(
+                    "🌺 Hoàn thành",
+                    use_container_width=True,
+                    key="hoan_thanh_tren"
+                )
                 st.markdown("### 🌸 Chọn hoa")
 
 
@@ -1719,10 +1723,7 @@ if st.session_state.quyen == "hoi":
                 # =====================
 
 
-                if st.button(
-                    "🌺 Hoàn thành",
-                    use_container_width=True
-                ):
+                if bam_hoan_thanh:
 
 
                     if len(st.session_state.hoa_dang_chon) == 0:
