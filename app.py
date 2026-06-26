@@ -674,6 +674,10 @@ if not st.session_state.da_dang_nhap:
                     "",
                     key="mk_login"
                 )
+                st.write(
+                    "Sau khi xóa:",
+                    storage.getItem("nho_tai_khoan_login")
+                )
 
             st.session_state.da_dang_nhap = True
             st.session_state.quyen = quyen_login
