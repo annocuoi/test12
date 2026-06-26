@@ -1574,38 +1574,20 @@ if st.session_state.quyen == "hoi":
                         dem_cap[cap] += 1
 
 
-                dem_tick = {
-                    "Đỏ": 0,
-                    "Cam": 0,
-                    "Tím": 0,
-                    "Xanh dương": 0,
-                    "Xanh lá": 0
-                }
-
-                for hoa in st.session_state.hoa_dang_chon:
-
-                    cap = (
-                        st.session_state.kho_hoa_tong
-                        .get(hoa, {})
-                        .get("cap")
-                    )
-
-                    if cap in dem_tick:
-                        dem_tick[cap] += 1
-                mau_chon = st.radio(
-                    "",
-                    [
-                        f"🌸 Tất cả: {len(st.session_state.hoa_dang_chon)}",
-                        f"🔴 Đỏ: {dem_tick['Đỏ']}",
-                        f"🟠 Cam: {dem_tick['Cam']}",
-                        f"🟣 Tím: {dem_tick['Tím']}",
-                        f"🔵 Xanh dương: {dem_tick['Xanh dương']}",
-                        f"🟢 Xanh lá: {dem_tick['Xanh lá']}"
-                    ],
-                    horizontal=True,
-                    label_visibility="collapsed",
-                    key="loc_mau_cap_hoa"
-                )
+             mau_chon = st.radio(
+                "",
+                [
+                    "🌸 Tất cả",
+                    "🔴 Đỏ",
+                    "🟠 Cam",
+                    "🟣 Tím",
+                    "🔵 Xanh dương",
+                    "🟢 Xanh lá"
+                ],
+                horizontal=True,
+                label_visibility="collapsed",
+                key="loc_mau_cap_hoa"
+            )
 
                 danh_sach_hoa = danh_sach_hoa_goc.copy()
 
@@ -1654,30 +1636,11 @@ if st.session_state.quyen == "hoi":
                     ]
 
 
-                col1, col2 = st.columns([4, 1])
+                st.markdown("### 🌸 Chọn hoa")
 
-                with col1:
 
-                    st.success(
-                        f"🌸 Đã chọn: {len(st.session_state.hoa_dang_chon)} hoa"
-                    )
+                hoa_chon = []
 
-                with col2:
-
-                    if st.button(
-                        "❌ Xóa",
-                        use_container_width=True
-                    ):
-
-                        st.session_state.hoa_dang_chon = []
-
-                        for k in list(st.session_state.keys()):
-
-                            if k.startswith("capnhanh_"):
-
-                                del st.session_state[k]
-
-                        st.rerun()
 
                 # =====================
                 # KHUNG CUỘN HOA NHẸ
