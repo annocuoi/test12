@@ -7,7 +7,7 @@ import time
 from PIL import Image
 from datetime import datetime
 import io
-from streamlit_cookies_controller import CookieController
+from streamlit_local_storage import LocalStorage
 # Cấu hình giao diện ứng dụng (phải nằm trước mọi lệnh st.)
 st.set_page_config(
     page_title="Quản Lý Hoa Hội",
@@ -20,8 +20,7 @@ st.set_page_config(
         "About": None
     }
 )
-cookies = CookieController()
-cookies.refresh()
+storage = LocalStorage()
 st.markdown(
     """
     <style>
@@ -548,10 +547,13 @@ if not st.session_state.da_dang_nhap:
     unsafe_allow_html=True
     )
     # nhớ tài khoản theo trình duyệt
-    tk_luu = cookies.get("nho_tai_khoan_login") or ""
-    mk_luu = cookies.get("nho_mat_khau_login") or ""
-    tick_luu = (cookies.get("nho_tick_login") or "").strip()
-    tick_mac_dinh = tick_luu == "1"
+    tk_luu = storage.getItem("nho_tai_khoan_login") or ""
+
+    mk_luu = storage.getItem("nho_mat_khau_login") or ""
+
+    tick_luu = storage.getItem("nho_tick_login") or "0"
+
+    tick_mac_dinh = (tick_luu == "1")
     
     ten_dang_nhap = st.text_input(
         "Tài khoản",
@@ -635,19 +637,23 @@ if not st.session_state.da_dang_nhap:
             # NHỚ ĐĂNG NHẬP MÁY NÀY
             # =====================
 
-            if nho_dang_nhap:
+            storage.setItem(
+                "nho_tick_login",
+                "0",
+                key="tick_login"
+            )
 
-                cookies.set("nho_tick_login", "1")
-                cookies.set("nho_tai_khoan_login", ten_dang_nhap)
-                cookies.set("nho_mat_khau_login", mat_khau_nhap)
+            storage.setItem(
+                "nho_tai_khoan_login",
+                "",
+                key="tk_login"
+            )
 
-            else:
-
-                cookies.set("nho_tick_login", "")
-                cookies.set("nho_tai_khoan_login", "")
-                cookies.set("nho_mat_khau_login", "")
-
-            cookies.refresh()
+            storage.setItem(
+                "nho_mat_khau_login",
+                "",
+                key="mk_login"
+            )
             st.session_state.da_dang_nhap = True
             st.session_state.quyen = quyen_login
 
