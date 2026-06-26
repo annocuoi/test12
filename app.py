@@ -1572,7 +1572,17 @@ if st.session_state.quyen == "hoi":
                         dem_cap[cap] += 1
 
 
-
+                st.markdown("""
+                <div style="
+                    font-size:22px;
+                    font-weight:700;
+                    color:#222;
+                    margin-top:0;
+                    margin-bottom:6px;
+                ">
+                🌈 Chọn màu hoa để hiển thị danh sách
+                </div>
+                """, unsafe_allow_html=True)
                 mau_chon = st.radio(
                     "",
                     [
