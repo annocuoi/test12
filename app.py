@@ -1588,8 +1588,8 @@ if st.session_state.quyen == "hoi":
                     key="loc_mau_cap_hoa"
                 )
                 if mau_chon is None:
-                st.info("👆 Chọn màu hoa để hiển thị danh sách.")
-                st.stop()
+                    st.info("👆 Chọn màu hoa để hiển thị danh sách.")
+                    st.stop()
 
                 danh_sach_hoa = danh_sach_hoa_goc.copy()
 
