@@ -1576,7 +1576,6 @@ if st.session_state.quyen == "hoi":
 
 
                 mau_chon = st.radio(
-                    "Loại hoa",
                     [
                         f"🌸 Tất cả: {len(danh_sach_hoa_goc)}",
                         f"🔴 Đỏ: {dem_cap['Đỏ']}",
@@ -1586,6 +1585,7 @@ if st.session_state.quyen == "hoi":
                         f"🟢 Xanh lá: {dem_cap['Xanh lá']}"
                     ],
                     horizontal=True,
+                    label_visibility="collapsed",
                     key="loc_mau_cap_hoa"
                 )
 
