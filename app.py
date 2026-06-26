@@ -8,6 +8,7 @@ from PIL import Image
 from datetime import datetime
 import io
 from streamlit_local_storage import LocalStorage
+
 # Cấu hình giao diện ứng dụng (phải nằm trước mọi lệnh st.)
 st.set_page_config(
     page_title="Quản Lý Hoa Hội",
@@ -546,18 +547,22 @@ if not st.session_state.da_dang_nhap:
     """,
     unsafe_allow_html=True
     )
-    # nhớ tài khoản theo trình duyệt
-    tk_luu = storage.getItem("nho_tai_khoan_login") or ""
-
-    mk_luu = storage.getItem("nho_mat_khau_login") or ""
+    # ==========================
+    # ĐỌC DỮ LIỆU ĐÃ LƯU
+    # ==========================
 
     tick_luu = storage.getItem("nho_tick_login") or "0"
 
-    tick_mac_dinh = (tick_luu == "1")
-    st.write("TK lưu:", repr(tk_luu))
-    st.write("MK lưu:", repr(mk_luu))
-    st.write("Tick:", repr(tick_luu))
-    
+    if tick_luu == "1":
+        tk_luu = storage.getItem("nho_tai_khoan_login") or ""
+        mk_luu = storage.getItem("nho_mat_khau_login") or ""
+        tick_mac_dinh = True
+    else:
+        tk_luu = ""
+        mk_luu = ""
+        tick_mac_dinh = False
+
+
     ten_dang_nhap = st.text_input(
         "Tài khoản",
         value=tk_luu,
@@ -635,49 +640,53 @@ if not st.session_state.da_dang_nhap:
 
         if dang_nhap_ok:
 
+
+            # =====================
+            # NHỚ ĐĂNG NHẬP MÁY NÀY
+            # =====================
+
             if nho_dang_nhap:
 
                 storage.setItem(
                     "nho_tick_login",
-                    "1",
-                    key="tick_login"
+                    "0",
+                    key="bo_tick_login"
                 )
 
                 storage.setItem(
                     "nho_tai_khoan_login",
-                    ten_dang_nhap,
-                    key="tk_login"
+                    "",
+                    key="xoa_tk_login"
                 )
 
                 storage.setItem(
                     "nho_mat_khau_login",
-                    mat_khau_nhap,
-                    key="mk_login"
+                    "",
+                    key="xoa_mk_login"
                 )
+
 
             else:
 
                 storage.setItem(
                     "nho_tick_login",
                     "0",
-                    key="tick_login"
+                    key="bo_tick_login"
                 )
 
-                storage.setItem(
+                storage.deleteItem(
                     "nho_tai_khoan_login",
-                    "",
-                    key="tk_login"
+                    key="xoa_tk_login"
                 )
 
-                storage.setItem(
+                storage.deleteItem(
                     "nho_mat_khau_login",
-                    "",
-                    key="mk_login"
+                    key="xoa_mk_login"
                 )
-                st.write(
-                    "Sau khi xóa:",
-                    storage.getItem("nho_tai_khoan_login")
-                )
+
+
+            time.sleep(1)
+
 
             st.session_state.da_dang_nhap = True
             st.session_state.quyen = quyen_login
