@@ -1654,7 +1654,7 @@ if st.session_state.quyen == "hoi":
                         "↺ Bỏ chọn",
                         use_container_width=True,
                         key="bo_chon_hoa"
-                    )::
+                    ):
 
                         st.session_state.hoa_dang_chon = []
 
