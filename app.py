@@ -1660,6 +1660,15 @@ if st.session_state.quyen == "hoi":
                         """,
                         unsafe_allow_html=True
                     )
+                        tong_hoa = len(danh_sach_hoa_goc)
+                        da_chon = len(st.session_state.hoa_dang_chon)
+
+                        if tong_hoa > 0:
+
+                            st.progress(
+                                da_chon / tong_hoa,
+                                text=f"{da_chon} / {tong_hoa} hoa"
+                            )
 
                 with col2:
 
