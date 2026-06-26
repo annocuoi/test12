@@ -635,28 +635,46 @@ if not st.session_state.da_dang_nhap:
 
         if dang_nhap_ok:
 
+            if nho_dang_nhap:
 
-            # =====================
-            # NHỚ ĐĂNG NHẬP MÁY NÀY
-            # =====================
+                storage.setItem(
+                    "nho_tick_login",
+                    "1",
+                    key="tick_login"
+                )
 
-            storage.setItem(
-                "nho_tick_login",
-                "0",
-                key="tick_login"
-            )
+                storage.setItem(
+                    "nho_tai_khoan_login",
+                    ten_dang_nhap,
+                    key="tk_login"
+                )
 
-            storage.setItem(
-                "nho_tai_khoan_login",
-                "",
-                key="tk_login"
-            )
+                storage.setItem(
+                    "nho_mat_khau_login",
+                    mat_khau_nhap,
+                    key="mk_login"
+                )
 
-            storage.setItem(
-                "nho_mat_khau_login",
-                "",
-                key="mk_login"
-            )
+            else:
+
+                storage.setItem(
+                    "nho_tick_login",
+                    "0",
+                    key="tick_login"
+                )
+
+                storage.setItem(
+                    "nho_tai_khoan_login",
+                    "",
+                    key="tk_login"
+                )
+
+                storage.setItem(
+                    "nho_mat_khau_login",
+                    "",
+                    key="mk_login"
+                )
+
             st.session_state.da_dang_nhap = True
             st.session_state.quyen = quyen_login
 
