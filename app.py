@@ -1583,25 +1583,10 @@ if st.session_state.quyen == "hoi":
                         "🟢 Xanh lá",
                     ],
                     horizontal=True,
-                    index=None,
+                    index=0,
                     label_visibility="collapsed",
                     key="loc_mau_cap_hoa"
                 )
-                if mau_chon is None:
-                    st.markdown(
-                        """
-                        <div style="
-                            color:#000000;
-                            font-size:20px;
-                            font-weight:bold;
-                        ">
-                            👆 Chọn màu hoa để hiển thị danh sách.
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-                    st.stop()
-
                 danh_sach_hoa = danh_sach_hoa_goc.copy()
 
 
