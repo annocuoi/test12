@@ -1650,14 +1650,21 @@ if st.session_state.quyen == "hoi":
                     if "hoa_dang_chon" not in st.session_state:
                         st.session_state.hoa_dang_chon = []
                     # Đưa hoa đã chọn lên đầu
-                    danh_sach_hien_thi = (
-                        st.session_state.hoa_dang_chon
-                        +
-                        [
-                            h
-                            for h in danh_sach_hoa
-                            if h not in st.session_state.hoa_dang_chon
+                    if mau_loc == "Tất cả":
+
+                        ds = danh_sach_hoa
+
+                    else:
+
+                        ds = [
+                            h for h in danh_sach_hoa
+                            if st.session_state.kho_hoa_tong[h]["cap"] == mau_loc
                         ]
+
+                    danh_sach_hien_thi = (
+                        [h for h in ds if h in st.session_state.hoa_dang_chon]
+                        +
+                        [h for h in ds if h not in st.session_state.hoa_dang_chon]
                     )
                     for i, hoa in enumerate(danh_sach_hien_thi):
 
