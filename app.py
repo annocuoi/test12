@@ -7,8 +7,7 @@ import time
 from PIL import Image
 from datetime import datetime
 import io
-from streamlit_local_storage import LocalStorage
-
+from streamlit_cookies_controller import CookieController
 # Cấu hình giao diện ứng dụng (phải nằm trước mọi lệnh st.)
 st.set_page_config(
     page_title="Quản Lý Hoa Hội",
@@ -21,7 +20,8 @@ st.set_page_config(
         "About": None
     }
 )
-storage = LocalStorage()
+cookies = CookieController()
+cookies.refresh()
 st.markdown(
     """
     <style>
@@ -548,14 +548,10 @@ if not st.session_state.da_dang_nhap:
     unsafe_allow_html=True
     )
     # nhớ tài khoản theo trình duyệt
-    tk_luu = storage.getItem(
-        "nho_tai_khoan_login",
-    ) or ""
+    tk_luu = cookies.get("nho_tai_khoan_login") or ""
 
 
-    mk_luu = storage.getItem(
-        "nho_mat_khau_login",
-    ) or ""
+    mk_luu = cookies.get("nho_mat_khau_login") or ""
     ten_dang_nhap = st.text_input(
         "Tài khoản",
         value=tk_luu,
@@ -568,9 +564,7 @@ if not st.session_state.da_dang_nhap:
         type="password",
         placeholder="Nhập mật khẩu..."
     )
-    tick_luu = storage.getItem(
-        "nho_tick_login"
-    )
+    tick_mac_dinh = cookies.get("nho_tick_login") == "1"
 
     if tick_luu == "1":
         tick_mac_dinh = True
@@ -649,49 +643,17 @@ if not st.session_state.da_dang_nhap:
 
             if nho_dang_nhap:
 
-                storage.setItem(
-                    "nho_tick_login",
-                    "1",
-                    key="luu_tick_login"
-                )
-
-                storage.setItem(
-                    "nho_tai_khoan_login",
-                    ten_dang_nhap,
-                    key="luu_tk_login"
-                )
-
-                storage.setItem(
-                    "nho_mat_khau_login",
-                    mat_khau_nhap,
-                    key="luu_mk_login"
-                )
-
+                cookies.set("nho_tick_login", "1")
+                cookies.set("nho_tai_khoan_login", ten_dang_nhap)
+                cookies.set("nho_mat_khau_login", mat_khau_nhap)
 
             else:
 
-                storage.setItem(
-                    "nho_tick_login",
-                    "0",
-                    key=f"tick_{time.time()}"
-                )
+                cookies.remove("nho_tick_login")
+                cookies.remove("nho_tai_khoan_login")
+                cookies.remove("nho_mat_khau_login")
 
-                storage.setItem(
-                    "nho_tai_khoan_login",
-                    "",
-                    key=f"tk_{time.time()}"
-                )
-
-                storage.setItem(
-                    "nho_mat_khau_login",
-                    "",
-                    key=f"mk_{time.time()}"
-                )
-
-
-            time.sleep(1)
-
-
+            cookies.refresh()
             st.session_state.da_dang_nhap = True
             st.session_state.quyen = quyen_login
 
