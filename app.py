@@ -1640,12 +1640,25 @@ if st.session_state.quyen == "hoi":
                 # THANH TRẠNG THÁI
                 # =====================
 
-                col1, col2 = st.columns([4, 1])
+                col1, col2 = st.columns([5, 1])
 
                 with col1:
 
-                    st.info(
-                        f"🌸 Đã chọn: {len(st.session_state.hoa_dang_chon)} hoa"
+                    st.markdown(
+                        f"""
+                        <div style="
+                            background:linear-gradient(90deg,#e8fff1,#f7fff9);
+                            border:1px solid #b7f0c7;
+                            border-radius:12px;
+                            padding:12px 18px;
+                            font-size:18px;
+                            font-weight:700;
+                            color:#007a3d;
+                        ">
+                            🌸 Đã chọn <span style="color:#ff0066;">{len(st.session_state.hoa_dang_chon)}</span> hoa
+                        </div>
+                        """,
+                        unsafe_allow_html=True
                     )
 
                 with col2:
@@ -1653,19 +1666,16 @@ if st.session_state.quyen == "hoi":
                     if st.button(
                         "↺ Bỏ chọn",
                         use_container_width=True,
-                        key="bo_chon_hoa"
+                        key="bo_chon_cap_hoa"
                     ):
 
                         st.session_state.hoa_dang_chon = []
 
                         for k in list(st.session_state.keys()):
-
                             if k.startswith("capnhanh_"):
-
                                 del st.session_state[k]
 
                         st.rerun()
-
 
                 # =====================
                 # KHUNG CUỘN HOA NHẸ
@@ -1771,8 +1781,9 @@ if st.session_state.quyen == "hoi":
 
 
                 if st.button(
-                    "🌺 Hoàn thành",
-                    use_container_width=True
+                    f"🌺 Hoàn thành ({len(st.session_state.hoa_dang_chon)})",
+                    use_container_width=True,
+                    key="hoan_thanh_cap_hoa"
                 ):
 
 
