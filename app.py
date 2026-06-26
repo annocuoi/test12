@@ -1757,18 +1757,26 @@ if st.session_state.quyen == "hoi":
                             )
 
 
+                            nen = "#e8fff0" if tick else "transparent"
+                            vien = "#8fd19e" if tick else "transparent"
+
                             st.markdown(
                                 f"""
                                 <div style="
                                     margin-top:-42px;
-                                    margin-left:35px;
+                                    margin-left:30px;
+                                    padding:6px 10px;
+                                    border-radius:10px;
+                                    border:1px solid {vien};
+                                    background:{nen};
                                     color:{mau_chu};
                                     font-weight:700;
                                     font-size:16px;
                                     white-space:nowrap;
-                                    height:35px;
+                                    display:inline-block;
+                                    min-width:240px;
                                 ">
-                                    {hoa}
+                                    🌸 {hoa}
                                 </div>
                                 """,
                                 unsafe_allow_html=True
