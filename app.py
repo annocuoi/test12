@@ -1649,8 +1649,17 @@ if st.session_state.quyen == "hoi":
                     cols = st.columns(4)
                     if "hoa_dang_chon" not in st.session_state:
                         st.session_state.hoa_dang_chon = []
-
-                    for i, hoa in enumerate(danh_sach_hoa):
+                    # Đưa hoa đã chọn lên đầu
+                    danh_sach_hien_thi = (
+                        st.session_state.hoa_dang_chon
+                        +
+                        [
+                            h
+                            for h in danh_sach_hoa
+                            if h not in st.session_state.hoa_dang_chon
+                        ]
+                    )
+                    for i, hoa in enumerate(danh_sach_hien_thi):
 
                         with cols[i % 4]:
 
