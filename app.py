@@ -1639,13 +1639,19 @@ if st.session_state.quyen == "hoi":
                             if tim_hoa.lower().strip()
                             in hoa.lower()
                         ]
-                thong_bao = st.empty()
                 bam_hoan_thanh = st.button(
                     "🌺 Hoàn thành",
                     use_container_width=True,
                     key="hoan_thanh_tren"
                 )
+
                 st.markdown("### 🌸 Chọn hoa")
+
+                thong_bao = st.empty()
+
+                if "thong_bao" in st.session_state:
+                    thong_bao.success(st.session_state.thong_bao)
+                    del st.session_state.thong_bao
 
 
                 hoa_chon = []
@@ -1726,7 +1732,7 @@ if st.session_state.quyen == "hoi":
                 if bam_hoan_thanh:
 
 
-                    if len(st.session_state.hoa_dang_chon) == 0:
+                    if not st.session_state.hoa_dang_chon:
 
 
                         thong_bao.warning("⚠️ Chưa chọn hoa")
@@ -1749,11 +1755,9 @@ if st.session_state.quyen == "hoi":
 
                             so_hoa = len(st.session_state.hoa_dang_chon)
 
-                            thong_bao.success(
+                            st.session_state.thong_bao = (
                                 f"✅ Đã thêm {so_hoa} hoa cho {tv_chon}"
                             )
-
-
                             # =====================
                             # XÓA TICK SAU KHI LƯU
                             # =====================
