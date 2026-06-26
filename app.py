@@ -1582,7 +1582,7 @@ if st.session_state.quyen == "hoi":
                         "🟣 Tím",
                         "🔵 Xanh dương",
                         "🟢 Xanh lá",
-                    ]
+                    ],
                     horizontal=True,
                     label_visibility="collapsed",
                     key="loc_mau_cap_hoa"
