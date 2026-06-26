@@ -1651,9 +1651,10 @@ if st.session_state.quyen == "hoi":
                 with col2:
 
                     if st.button(
-                        "❌ Xóa",
-                        use_container_width=True
-                    ):
+                        "↺ Bỏ chọn",
+                        use_container_width=True,
+                        key="bo_chon_hoa"
+                    )::
 
                         st.session_state.hoa_dang_chon = []
 
