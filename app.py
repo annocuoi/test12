@@ -1576,7 +1576,6 @@ if st.session_state.quyen == "hoi":
 
 
                 mau_chon = st.radio(
-                    "🌈 Loại hoa: (Số đếm kế bên là số lượng hoa mà hv chưa có)",
                     [
                         f"🌸 Tất cả: {len(danh_sach_hoa_goc)}",
                         f"🔴 Đỏ: {dem_cap['Đỏ']}",
