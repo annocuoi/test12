@@ -1574,16 +1574,17 @@ if st.session_state.quyen == "hoi":
 
 
                 mau_chon = st.radio(
-                    "🌈 Loại hoa: (Số đếm kế bên là số lượng hoa mà hv chưa có)",
+                    "",
                     [
-                        f"🌸 Tất cả: {len(danh_sach_hoa_goc)}",
-                        f"🔴 Đỏ: {dem_cap['Đỏ']}",
-                        f"🟠 Cam: {dem_cap['Cam']}",
-                        f"🟣 Tím: {dem_cap['Tím']}",
-                        f"🔵 Xanh dương: {dem_cap['Xanh dương']}",
-                        f"🟢 Xanh lá: {dem_cap['Xanh lá']}"
-                    ],
+                        "🌸 Tất cả",
+                        "🔴 Đỏ",
+                        "🟠 Cam",
+                        "🟣 Tím",
+                        "🔵 Xanh dương",
+                        "🟢 Xanh lá",
+                    ]
                     horizontal=True,
+                    label_visibility="collapsed",
                     key="loc_mau_cap_hoa"
                 )
 
@@ -2976,4 +2977,3 @@ if st.session_state.quyen == "hoi":
                         st.session_state.force_reload = True
 
                         st.rerun()
-
