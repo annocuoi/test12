@@ -547,22 +547,15 @@ if not st.session_state.da_dang_nhap:
     """,
     unsafe_allow_html=True
     )
-    # ==========================
-    # ĐỌC DỮ LIỆU ĐÃ LƯU
-    # ==========================
-
-    tick_luu = storage.getItem("nho_tick_login") or "0"
-
-    if tick_luu == "1":
-        tk_luu = storage.getItem("nho_tai_khoan_login") or ""
-        mk_luu = storage.getItem("nho_mat_khau_login") or ""
-        tick_mac_dinh = True
-    else:
-        tk_luu = ""
-        mk_luu = ""
-        tick_mac_dinh = False
+    # nhớ tài khoản theo trình duyệt
+    tk_luu = storage.getItem(
+        "nho_tai_khoan_login",
+    ) or ""
 
 
+    mk_luu = storage.getItem(
+        "nho_mat_khau_login",
+    ) or ""
     ten_dang_nhap = st.text_input(
         "Tài khoản",
         value=tk_luu,
@@ -575,6 +568,15 @@ if not st.session_state.da_dang_nhap:
         type="password",
         placeholder="Nhập mật khẩu..."
     )
+    tick_luu = storage.getItem(
+        "nho_tick_login"
+    )
+
+    if tick_luu == "1":
+        tick_mac_dinh = True
+    else:
+        tick_mac_dinh = False
+
 
     nho_dang_nhap = st.checkbox(
         "💾 Nhớ tài khoản và mật khẩu",
@@ -649,20 +651,20 @@ if not st.session_state.da_dang_nhap:
 
                 storage.setItem(
                     "nho_tick_login",
-                    "0",
-                    key="bo_tick_login"
+                    "1",
+                    key="luu_tick_login"
                 )
 
                 storage.setItem(
                     "nho_tai_khoan_login",
-                    "",
-                    key="xoa_tk_login"
+                    ten_dang_nhap,
+                    key="luu_tk_login"
                 )
 
                 storage.setItem(
                     "nho_mat_khau_login",
-                    "",
-                    key="xoa_mk_login"
+                    mat_khau_nhap,
+                    key="luu_mk_login"
                 )
 
 
@@ -674,16 +676,14 @@ if not st.session_state.da_dang_nhap:
                     key="bo_tick_login"
                 )
 
-                storage.deleteItem(
-                    "nho_tai_khoan_login",
-                    key="xoa_tk_login"
-                )
-
-                storage.deleteItem(
-                    "nho_mat_khau_login",
-                    key="xoa_mk_login"
-                )
-
+                try:
+                    if storage.getItem("nho_tai_khoan_login"):
+                        storage.deleteItem("nho_tai_khoan_login", key="xoa_tk_login")
+                    if storage.getItem("nho_mat_khau_login"):
+                        storage.deleteItem("nho_mat_khau_login", key="xoa_mk_login")
+                except Exception:
+                    # Bỏ qua lỗi nếu key không tồn tại hoặc đã bị xóa
+                    pass
 
             time.sleep(1)
 
@@ -2976,3 +2976,4 @@ if st.session_state.quyen == "hoi":
                         st.session_state.force_reload = True
 
                         st.rerun()
+
