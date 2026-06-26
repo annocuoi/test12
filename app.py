@@ -1574,20 +1574,20 @@ if st.session_state.quyen == "hoi":
                         dem_cap[cap] += 1
 
 
-             mau_chon = st.radio(
-                "",
-                [
-                    "🌸 Tất cả",
-                    "🔴 Đỏ",
-                    "🟠 Cam",
-                    "🟣 Tím",
-                    "🔵 Xanh dương",
-                    "🟢 Xanh lá"
-                ],
-                horizontal=True,
-                label_visibility="collapsed",
-                key="loc_mau_cap_hoa"
-            )
+                mau_chon = st.radio(
+                    "",
+                    [
+                        "🌸 Tất cả",
+                        "🔴 Đỏ",
+                        "🟠 Cam",
+                        "🟣 Tím",
+                        "🔵 Xanh dương",
+                        "🟢 Xanh lá"
+                    ],
+                    horizontal=True,
+                    label_visibility="collapsed",
+                    key="loc_mau_cap_hoa"
+                )
 
                 danh_sach_hoa = danh_sach_hoa_goc.copy()
 
