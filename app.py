@@ -550,8 +550,8 @@ if not st.session_state.da_dang_nhap:
     # nhớ tài khoản theo trình duyệt
     tk_luu = cookies.get("nho_tai_khoan_login") or ""
     mk_luu = cookies.get("nho_mat_khau_login") or ""
-    tick_luu = cookies.get("nho_tick_login") or "0"
-    tick_mac_dinh = (tick_luu == "1")
+    tick_luu = (cookies.get("nho_tick_login") or "").strip()
+    tick_mac_dinh = tick_luu == "1"
     
     ten_dang_nhap = st.text_input(
         "Tài khoản",
@@ -643,9 +643,9 @@ if not st.session_state.da_dang_nhap:
 
             else:
 
-                cookies.remove("nho_tick_login")
-                cookies.remove("nho_tai_khoan_login")
-                cookies.remove("nho_mat_khau_login")
+                cookies.set("nho_tick_login", "")
+                cookies.set("nho_tai_khoan_login", "")
+                cookies.set("nho_mat_khau_login", "")
 
             cookies.refresh()
             st.session_state.da_dang_nhap = True
