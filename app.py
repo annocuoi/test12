@@ -1639,7 +1639,7 @@ if st.session_state.quyen == "hoi":
                             if tim_hoa.lower().strip()
                             in hoa.lower()
                         ]
-
+                thong_bao = st.empty()
                 bam_hoan_thanh = st.button(
                     "🌺 Hoàn thành",
                     use_container_width=True,
@@ -1729,9 +1729,7 @@ if st.session_state.quyen == "hoi":
                     if len(st.session_state.hoa_dang_chon) == 0:
 
 
-                        st.warning(
-                            "⚠️ Chưa chọn hoa"
-                        )
+                        thong_bao.warning("⚠️ Chưa chọn hoa")
 
 
                     else:
@@ -1751,7 +1749,7 @@ if st.session_state.quyen == "hoi":
 
                             so_hoa = len(st.session_state.hoa_dang_chon)
 
-                            st.success(
+                            thong_bao.success(
                                 f"✅ Đã thêm {so_hoa} hoa cho {tv_chon}"
                             )
 
