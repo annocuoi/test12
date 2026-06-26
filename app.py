@@ -1574,18 +1574,18 @@ if st.session_state.quyen == "hoi":
                         dem_cap[cap] += 1
 
 
+
                 mau_chon = st.radio(
-                    "",
+                    "🌈 Loại hoa: (Số đếm kế bên là số lượng hoa mà hv chưa có)",
                     [
-                        "🌸 Tất cả",
-                        "🔴 Đỏ",
-                        "🟠 Cam",
-                        "🟣 Tím",
-                        "🔵 Xanh dương",
-                        "🟢 Xanh lá"
+                        f"🌸 Tất cả: {len(danh_sach_hoa_goc)}",
+                        f"🔴 Đỏ: {dem_cap['Đỏ']}",
+                        f"🟠 Cam: {dem_cap['Cam']}",
+                        f"🟣 Tím: {dem_cap['Tím']}",
+                        f"🔵 Xanh dương: {dem_cap['Xanh dương']}",
+                        f"🟢 Xanh lá: {dem_cap['Xanh lá']}"
                     ],
                     horizontal=True,
-                    label_visibility="collapsed",
                     key="loc_mau_cap_hoa"
                 )
 
@@ -1593,6 +1593,7 @@ if st.session_state.quyen == "hoi":
 
 
                 if "Tất cả" not in mau_chon:
+
 
                     ten_mau = (
                         mau_chon
@@ -1604,6 +1605,7 @@ if st.session_state.quyen == "hoi":
                         .replace("🟢 ","")
                     )
 
+
                     danh_sach_hoa = [
 
                         hoa for hoa in danh_sach_hoa
@@ -1613,78 +1615,30 @@ if st.session_state.quyen == "hoi":
                         .get("cap") == ten_mau
 
                     ]
-
-                # =====================
-                # 🔍 TÌM HOA
-                # =====================
-
-                tim_hoa = st.text_input(
-                    "🔍 Tìm hoa",
-                    placeholder="Nhập tên hoa...",
-                    key="tim_hoa_cap_nhanh"
-                )
-
-                if tim_hoa.strip():
-
-                    danh_sach_hoa = [
-
-                        hoa
-                        for hoa in danh_sach_hoa
-                        if tim_hoa.lower().strip()
-                        in hoa.lower()
-
-                    ]
-
-
-                # =====================
-                # THANH TRẠNG THÁI
-                # =====================
-
-                col1, col2 = st.columns([5, 1])
-
-                with col1:
-
-                    st.markdown(
-                        f"""
-                        <div style="
-                            background:linear-gradient(90deg,#e8fff1,#f7fff9);
-                            border:1px solid #b7f0c7;
-                            border-radius:12px;
-                            padding:12px 18px;
-                            font-size:18px;
-                            font-weight:700;
-                            color:#007a3d;
-                        ">
-                            🌸 Đã chọn <span style="color:#ff0066;">{len(st.session_state.hoa_dang_chon)}</span> hoa
-                        </div>
-                        """,
-                        unsafe_allow_html=True
+                    # giữ danh sách gốc
+                    danh_sach_hoa_goc = danh_sach_hoa.copy()
+                    # 🔍 TÌM HOA
+                    tim_hoa = st.text_input(
+                        "🔍 Tìm hoa",
+                        placeholder="Nhập tên hoa...",
+                        key="tim_hoa_cap_nhanh"
                     )
-                    tong_hoa = len(danh_sach_hoa_goc)
-                    da_chon = len(st.session_state.hoa_dang_chon)
 
-                    if tong_hoa > 0:
+                    if tim_hoa.strip():
 
-                        st.progress(
-                            da_chon / tong_hoa,
-                            text=f"{da_chon} / {tong_hoa} hoa"
-                        )
+                        danh_sach_hoa = [
+                            hoa
+                            for hoa in danh_sach_hoa
+                            if tim_hoa.lower().strip()
+                            in hoa.lower()
+                        ]
 
-                with col2:
 
-                    if st.button(
-                        "↺ Bỏ chọn",
-                        use_container_width=True,
-                        key="bo_chon_cap_hoa"
-                    ):
+                st.markdown("### 🌸 Chọn hoa")
 
-                        st.session_state.hoa_dang_chon = []
 
-                        for k in list(st.session_state.keys()):
-                            if k.startswith("capnhanh_"):
-                                del st.session_state[k]
+                hoa_chon = []
 
-                        st.rerun()
 
                 # =====================
                 # KHUNG CUỘN HOA NHẸ
@@ -1695,39 +1649,8 @@ if st.session_state.quyen == "hoi":
                     cols = st.columns(4)
                     if "hoa_dang_chon" not in st.session_state:
                         st.session_state.hoa_dang_chon = []
-                    # Đưa hoa đã chọn lên đầu
-                    dem_tick = {
-                        "Đỏ": 0,
-                        "Cam": 0,
-                        "Tím": 0,
-                        "Xanh dương": 0,
-                        "Xanh lá": 0
-                    }
 
-                    for hoa in st.session_state.hoa_dang_chon:
-
-                        cap = (
-                            st.session_state.kho_hoa_tong
-                            .get(hoa, {})
-                            .get("cap")
-                        )
-
-                        if cap in dem_tick:
-                            dem_tick[cap] += 1
-                    danh_sach_hien_thi = (
-                        [
-                            hoa
-                            for hoa in danh_sach_hoa
-                            if hoa in st.session_state.hoa_dang_chon
-                        ]
-                        +
-                        [
-                            hoa
-                            for hoa in danh_sach_hoa
-                            if hoa not in st.session_state.hoa_dang_chon
-                        ]
-                    )
-                    for i, hoa in enumerate(danh_sach_hien_thi):
+                    for i, hoa in enumerate(danh_sach_hoa):
 
                         with cols[i % 4]:
 
@@ -1757,26 +1680,18 @@ if st.session_state.quyen == "hoi":
                             )
 
 
-                            nen = "#e8fff0" if tick else "transparent"
-                            vien = "#8fd19e" if tick else "transparent"
-
                             st.markdown(
                                 f"""
                                 <div style="
                                     margin-top:-42px;
-                                    margin-left:30px;
-                                    padding:6px 10px;
-                                    border-radius:10px;
-                                    border:1px solid {vien};
-                                    background:{nen};
+                                    margin-left:35px;
                                     color:{mau_chu};
                                     font-weight:700;
                                     font-size:16px;
                                     white-space:nowrap;
-                                    display:inline-block;
-                                    min-width:240px;
+                                    height:35px;
                                 ">
-                                    🌸 {hoa}
+                                    {hoa}
                                 </div>
                                 """,
                                 unsafe_allow_html=True
@@ -1798,9 +1713,8 @@ if st.session_state.quyen == "hoi":
 
 
                 if st.button(
-                    f"🌺 Hoàn thành ({len(st.session_state.hoa_dang_chon)})",
-                    use_container_width=True,
-                    key="hoan_thanh_cap_hoa"
+                    "🌺 Hoàn thành",
+                    use_container_width=True
                 ):
 
 
