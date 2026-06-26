@@ -549,9 +549,10 @@ if not st.session_state.da_dang_nhap:
     )
     # nhớ tài khoản theo trình duyệt
     tk_luu = cookies.get("nho_tai_khoan_login") or ""
-
-
     mk_luu = cookies.get("nho_mat_khau_login") or ""
+    tick_luu = cookies.get("nho_tick_login") or "0"
+    tick_mac_dinh = (tick_luu == "1")
+    
     ten_dang_nhap = st.text_input(
         "Tài khoản",
         value=tk_luu,
@@ -564,13 +565,6 @@ if not st.session_state.da_dang_nhap:
         type="password",
         placeholder="Nhập mật khẩu..."
     )
-    tick_mac_dinh = cookies.get("nho_tick_login") == "1"
-
-    if tick_luu == "1":
-        tick_mac_dinh = True
-    else:
-        tick_mac_dinh = False
-
 
     nho_dang_nhap = st.checkbox(
         "💾 Nhớ tài khoản và mật khẩu",
