@@ -671,20 +671,22 @@ if not st.session_state.da_dang_nhap:
             else:
 
                 storage.setItem(
-                    "nho_tick_login",
-                    "0",
-                    key="bo_tick_login"
-                )
+                "nho_tick_login",
+                "0",
+                key=f"tick_{time.time()}"
+            )
 
-                storage.deleteItem(
-                    "nho_tai_khoan_login",
-                    key="xoa_tk_login"
-                )
+            storage.setItem(
+                "nho_tai_khoan_login",
+                "",
+                key=f"tk_{time.time()}"
+            )
 
-                storage.deleteItem(
-                    "nho_mat_khau_login",
-                    key="xoa_mk_login"
-                )
+            storage.setItem(
+                "nho_mat_khau_login",
+                "",
+                key=f"mk_{time.time()}"
+            )
 
 
             time.sleep(1)
