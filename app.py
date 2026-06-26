@@ -1636,10 +1636,34 @@ if st.session_state.quyen == "hoi":
                     ]
 
 
-                st.markdown("### 🌸 Chọn hoa")
+                # =====================
+                # THANH TRẠNG THÁI
+                # =====================
 
+                col1, col2 = st.columns([4, 1])
 
-                hoa_chon = []
+                with col1:
+
+                    st.info(
+                        f"🌸 Đã chọn: {len(st.session_state.hoa_dang_chon)} hoa"
+                    )
+
+                with col2:
+
+                    if st.button(
+                        "❌ Xóa",
+                        use_container_width=True
+                    ):
+
+                        st.session_state.hoa_dang_chon = []
+
+                        for k in list(st.session_state.keys()):
+
+                            if k.startswith("capnhanh_"):
+
+                                del st.session_state[k]
+
+                        st.rerun()
 
 
                 # =====================
