@@ -1578,12 +1578,12 @@ if st.session_state.quyen == "hoi":
                 mau_chon = st.radio(
                     "",
                     [
-                        f"🌸 Tất cả: {len(danh_sach_hoa_goc)}",
-                        f"🔴 Đỏ: {dem_cap['Đỏ']}",
-                        f"🟠 Cam: {dem_cap['Cam']}",
-                        f"🟣 Tím: {dem_cap['Tím']}",
-                        f"🔵 Xanh dương: {dem_cap['Xanh dương']}",
-                        f"🟢 Xanh lá: {dem_cap['Xanh lá']}"
+                        f"🌸 Tất cả: {len(st.session_state.hoa_dang_chon)}",
+                        f"🔴 Đỏ: {dem_tick['Đỏ']}",
+                        f"🟠 Cam: {dem_tick['Cam']}",
+                        f"🟣 Tím: {dem_tick['Tím']}",
+                        f"🔵 Xanh dương: {dem_tick['Xanh dương']}",
+                        f"🟢 Xanh lá: {dem_tick['Xanh lá']}"
                     ],
                     horizontal=True,
                     label_visibility="collapsed",
@@ -1653,7 +1653,24 @@ if st.session_state.quyen == "hoi":
                     if "hoa_dang_chon" not in st.session_state:
                         st.session_state.hoa_dang_chon = []
                     # Đưa hoa đã chọn lên đầu
-                    # Đưa hoa đã chọn lên đầu
+                    dem_tick = {
+                        "Đỏ": 0,
+                        "Cam": 0,
+                        "Tím": 0,
+                        "Xanh dương": 0,
+                        "Xanh lá": 0
+                    }
+
+                    for hoa in st.session_state.hoa_dang_chon:
+
+                        cap = (
+                            st.session_state.kho_hoa_tong
+                            .get(hoa, {})
+                            .get("cap")
+                        )
+
+                        if cap in dem_tick:
+                            dem_tick[cap] += 1
                     danh_sach_hien_thi = (
                         [
                             hoa
