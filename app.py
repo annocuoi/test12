@@ -1574,7 +1574,24 @@ if st.session_state.quyen == "hoi":
                         dem_cap[cap] += 1
 
 
+                dem_tick = {
+                    "Đỏ": 0,
+                    "Cam": 0,
+                    "Tím": 0,
+                    "Xanh dương": 0,
+                    "Xanh lá": 0
+                }
 
+                for hoa in st.session_state.hoa_dang_chon:
+
+                    cap = (
+                        st.session_state.kho_hoa_tong
+                        .get(hoa, {})
+                        .get("cap")
+                    )
+
+                    if cap in dem_tick:
+                        dem_tick[cap] += 1
                 mau_chon = st.radio(
                     "",
                     [
@@ -1637,11 +1654,30 @@ if st.session_state.quyen == "hoi":
                     ]
 
 
-                st.markdown("### 🌸 Chọn hoa")
+                col1, col2 = st.columns([4, 1])
 
+                with col1:
 
-                hoa_chon = []
+                    st.success(
+                        f"🌸 Đã chọn: {len(st.session_state.hoa_dang_chon)} hoa"
+                    )
 
+                with col2:
+
+                    if st.button(
+                        "❌ Xóa",
+                        use_container_width=True
+                    ):
+
+                        st.session_state.hoa_dang_chon = []
+
+                        for k in list(st.session_state.keys()):
+
+                            if k.startswith("capnhanh_"):
+
+                                del st.session_state[k]
+
+                        st.rerun()
 
                 # =====================
                 # KHUNG CUỘN HOA NHẸ
