@@ -1521,6 +1521,16 @@ if st.session_state.quyen == "hoi":
                 ["-- Chọn --"] + danh_sach_tv,
                 key="chon_tv_cap_nhanh"
             )
+            if "tv_chon_cu" not in st.session_state:
+                st.session_state.tv_chon_cu = tv_chon
+
+            if st.session_state.tv_chon_cu != tv_chon:
+
+                st.session_state.hoa_dang_chon = []
+
+                st.session_state.tv_chon_cu = tv_chon
+
+                st.rerun()
 
 
             if tv_chon != "-- Chọn --":
