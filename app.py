@@ -554,6 +554,9 @@ if not st.session_state.da_dang_nhap:
     tick_luu = storage.getItem("nho_tick_login") or "0"
 
     tick_mac_dinh = (tick_luu == "1")
+    st.write("TK lưu:", repr(tk_luu))
+    st.write("MK lưu:", repr(mk_luu))
+    st.write("Tick:", repr(tick_luu))
     
     ten_dang_nhap = st.text_input(
         "Tài khoản",
