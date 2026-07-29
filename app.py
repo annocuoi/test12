@@ -410,7 +410,7 @@ def doc_du_lieu_hoi(ten_hoi):
             noi_dung = r.json()["content"].replace("\n", "")
             data = json.loads(base64.b64decode(noi_dung).decode("utf-8"))
             
-            # Giải mã ảnh trong kho riêng của hội (nếu có)
+            # Giải mã ảnh trong kho riêng của hội
             kho_rieng = data.get("_kho_hoa_rieng", {})
             for ten_hoa in kho_rieng:
                 if kho_rieng[ten_hoa].get("anh") and isinstance(kho_rieng[ten_hoa]["anh"], str):
@@ -534,8 +534,18 @@ with col_logout:
         st.rerun()
 
 # ----------------------------------------------------
-# 💾 HÀM GHI DỮ LIỆU LÊN GITHUB
+# 💾 HÀM CHUẨN HÓA VÀ LƯU DỮ LIỆU
 # ----------------------------------------------------
+def chuan_hoa_data_hoi(data):
+    """Mã hóa toàn bộ bytes thành base64 string trước khi ép kiểu sang JSON"""
+    import copy
+    data_copy = copy.deepcopy(data)
+    kho_rieng = data_copy.get("_kho_hoa_rieng", {})
+    for ten_hoa, info in kho_rieng.items():
+        if info.get("anh") and isinstance(info["anh"], bytes):
+            info["anh"] = base64.b64encode(info["anh"]).decode("utf-8")
+    return data_copy
+
 def luu_du_lieu_len_github():
     if not GITHUB_TOKEN:
         st.error("Chưa cấu hình GITHUB_TOKEN!")
@@ -584,12 +594,7 @@ def luu_du_lieu_hoi(ten_hoi, data):
         url = f"https://api.github.com/repos/{REPO_NAME}/contents/{file_path}"
         get_file = requests.get(url, headers=HEADERS, timeout=5)
 
-        # Encode kho riêng nếu có
-        data_save = json.loads(json.dumps(data, default=str))
-        kho_rieng = data_save.get("_kho_hoa_rieng", {})
-        for ten_hoa, info in kho_rieng.items():
-            if info.get("anh") and isinstance(info["anh"], bytes):
-                info["anh"] = base64.b64encode(info["anh"]).decode("utf-8")
+        data_save = chuan_hoa_data_hoi(data)
 
         payload = {
             "message": f"Luu hoi {ten_hoi}",
@@ -636,7 +641,6 @@ elif st.session_state.quyen in ["hoi", "xem"]:
         st.session_state.hoi_dang_mo = ten
     du_lieu_hoi_dang_dung = st.session_state.du_lieu_hoi
     
-    # Hợp nhất Kho hoa chung của Admin và Kho riêng của Hội này
     kho_hoa_kha_dung = st.session_state.kho_hoa_tong.copy()
     kho_hoa_kha_dung.update(du_lieu_hoi_dang_dung.get("_kho_hoa_rieng", {}))
 
@@ -842,7 +846,6 @@ if st.session_state.quyen == "hoi":
             ["👥 Hội viên", "🌸 Cấp nhanh hoa", "📋 Danh sách hội viên", "🌺 Thêm Hoa Mới (Kho Riêng)"]
         )
         
-        # TAB 4 MỚI: THÊM HOA MỚI VÀO KHO RIÊNG CỦA HỘI
         with tab_kho_rieng:
             st.markdown("## 🌺 Thêm Hoa Mới Vào Kho Riêng Của Hội")
             st.info("💡 Hoa do Hội thêm ở đây sẽ thuộc về kho riêng của Hội này, không ảnh hưởng đến các Hội khác.")
@@ -1354,7 +1357,7 @@ if st.session_state.quyen != "admin":
             st.write("---")
             st.subheader("💾 Sao lưu dữ liệu hội")
 
-            du_lieu_xuat = {ten_tv: ds_hoa for ten_tv, ds_hoa in du_lieu_hoi_dang_dung.items()}
+            du_lieu_xuat = chuan_hoa_data_hoi(du_lieu_hoi_dang_dung)
             file_json = json.dumps(du_lieu_xuat, ensure_ascii=False, indent=4)
 
             st.download_button(
