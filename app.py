@@ -237,7 +237,7 @@ def doc_du_lieu_hoi(ten_hoi):
         return {}
 
 # ==========================
-# GIAO DIỆN ĐĂNG NHẬP (ĐÃ SỬA LỖI LƯU & TRÁNH AUTOFILL)
+# GIAO DIỆN ĐĂNG NHẬP
 # ==========================
 if not st.session_state.da_dang_nhap:
     st.markdown(
@@ -250,20 +250,30 @@ if not st.session_state.da_dang_nhap:
         unsafe_allow_html=True
     )
     
-    # Đọc dữ liệu nhớ từ LocalStorage nếu có
     tk_luu = storage.getItem("nho_tai_khoan_login") or ""
     mk_luu = storage.getItem("nho_mat_khau_login") or ""
     tick_luu = storage.getItem("nho_tick_login")
     tick_mac_dinh = True if tick_luu == "1" else False
 
-    # Khởi tạo giá trị tạm vào Session State để tránh bị Autofill ghi đè
-    if "input_tk_login" not in st.session_state:
-        st.session_state.input_tk_login = tk_luu
-    if "input_mk_login" not in st.session_state:
-        st.session_state.input_mk_login = mk_luu
+    if "user_login_val" not in st.session_state:
+        st.session_state["user_login_val"] = tk_luu
+    if "pass_login_val" not in st.session_state:
+        st.session_state["pass_login_val"] = mk_luu
 
-    ten_dang_nhap = st.text_input("Tài khoản", key="input_tk_login", placeholder="Nhập tài khoản..")
-    mat_khau_nhap = st.text_input("Mật khẩu", key="input_mk_login", type="password", placeholder="Nhập mật khẩu...")
+    ten_dang_nhap = st.text_input(
+        "Tài khoản", 
+        value=st.session_state["user_login_val"], 
+        placeholder="Nhập tài khoản..",
+        key="txt_user_field_no_autofill"
+    )
+    
+    mat_khau_nhap = st.text_input(
+        "Mật khẩu", 
+        value=st.session_state["pass_login_val"], 
+        type="password", 
+        placeholder="Nhập mật khẩu...",
+        key="txt_pass_field_no_autofill"
+    )
 
     nho_dang_nhap = st.checkbox("💾 Nhớ tài khoản và mật khẩu", value=tick_mac_dinh)
 
@@ -310,11 +320,8 @@ if not st.session_state.da_dang_nhap:
                 storage.setItem("nho_mat_khau_login", pass_clean, key="luu_mk_login")
             else:
                 storage.setItem("nho_tick_login", "0", key="bo_tick_login")
-                try:
-                    storage.deleteItem("nho_tai_khoan_login", key="xoa_tk_login")
-                    storage.deleteItem("nho_mat_khau_login", key="xoa_mk_login")
-                except Exception:
-                    pass
+                storage.setItem("nho_tai_khoan_login", "", key="xoa_tk_login")
+                storage.setItem("nho_mat_khau_login", "", key="xoa_mk_login")
 
             time.sleep(0.3)
 
@@ -582,7 +589,55 @@ if st.session_state.quyen == "admin":
                         if luu_du_lieu():
                             st.session_state.key_them_hoa += 1
                             st.rerun()
-        
+
+            # --- PHẦN BỔ SUNG: CHỈNH SỬA HOA KHO CHUNG (ADMIN) ---
+            with st.expander("✏️ Chỉnh sửa hoa trong Kho Chung", expanded=False):
+                ds_hoa_sua_admin = ["-- Chọn hoa để sửa --"] + list(st.session_state.kho_hoa_tong.keys())
+                hoa_chon_sua_admin = st.selectbox("Chọn hoa muốn chỉnh sửa", ds_hoa_sua_admin, key="sl_sua_hoa_admin")
+
+                if hoa_chon_sua_admin != "-- Chọn hoa để sửa --":
+                    info_cu = st.session_state.kho_hoa_tong[hoa_chon_sua_admin]
+                    
+                    ten_hoa_sua = st.text_input("Tên hoa mới", value=hoa_chon_sua_admin, key=f"edit_ten_{hoa_chon_sua_admin}")
+                    
+                    list_cap = ["Xanh lá", "Xanh dương", "Tím", "Cam", "Đỏ"]
+                    idx_cap = list_cap.index(info_cu.get("cap", "Đỏ")) if info_cu.get("cap") in list_cap else 0
+                    cap_hoa_sua = st.selectbox("Cấp bậc mới", options=list_cap, index=idx_cap, key=f"edit_cap_{hoa_chon_sua_admin}")
+
+                    file_anh_sua = st.file_uploader("Thay đổi hình ảnh mới (Bỏ qua nếu không đổi)", type=["png", "jpg", "jpeg"], key=f"edit_img_{hoa_chon_sua_admin}")
+
+                    if st.button("💾 Lưu thay đổi hoa Kho Chung", use_container_width=True):
+                        ten_clean = ten_hoa_sua.strip()
+                        if not ten_clean:
+                            st.error("Tên hoa không được để trống!")
+                        else:
+                            # 1. Xử lý ảnh
+                            anh_moi = info_cu.get("anh")
+                            if file_anh_sua is not None:
+                                try:
+                                    img = Image.open(file_anh_sua)
+                                    if img.mode != "RGB":
+                                        img = img.convert("RGB")
+                                    img.thumbnail((300, 300))
+                                    buffer = io.BytesIO()
+                                    img.save(buffer, format="JPEG", quality=70)
+                                    anh_moi = base64.b64encode(buffer.getvalue()).decode('utf-8')
+                                except Exception:
+                                    anh_moi = base64.b64encode(file_anh_sua.read()).decode('utf-8')
+
+                            # 2. Đổi tên trong kho chung nếu đổi tên
+                            if ten_clean != hoa_chon_sua_admin:
+                                del st.session_state.kho_hoa_tong[hoa_chon_sua_admin]
+
+                            st.session_state.kho_hoa_tong[ten_clean] = {
+                                "cap": cap_hoa_sua,
+                                "anh": anh_moi
+                            }
+
+                            if luu_du_lieu():
+                                st.success("✅ Đã cập nhật thông tin hoa!")
+                                st.rerun()
+
         with col_kho2:
             st.markdown("<p style='font-size:14px;font-weight:bold;'>📋 Danh sách hoa chung</p>", unsafe_allow_html=True)
             if not st.session_state.kho_hoa_tong:
@@ -673,7 +728,7 @@ if st.session_state.quyen == "hoi":
         )
         
         with tab_kho_rieng:
-            st.markdown("## 🌺 Thêm / Xóa Hoa Kho Riêng Của Hội")
+            st.markdown("## 🌺 Thêm / Sửa / Xóa Hoa Kho Riêng Của Hội")
             st.info("💡 Hoa do Hội thêm ở đây sẽ thuộc về kho riêng của Hội này, không ảnh hưởng đến các Hội khác.")
             
             if "_kho_hoa_rieng" not in du_lieu_hoi_dang_dung:
@@ -727,6 +782,60 @@ if st.session_state.quyen == "hoi":
                         st.session_state.key_them_hoa_hoi += 1
                         st.success(f"✅ Đã thêm '{ten_clean}' vào kho riêng thành công!")
                         st.rerun()
+
+            st.write("---")
+            
+            # --- PHẦN BỔ SUNG: CHỈNH SỬA HOA KHO RIÊNG (HỘI) ---
+            st.markdown("### ✏️ Chỉnh sửa hoa Kho Riêng")
+            ds_hoa_rieng_sua = ["-- Chọn hoa để sửa --"] + list(du_lieu_hoi_dang_dung.get("_kho_hoa_rieng", {}).keys())
+            hoa_rieng_sua_chon = st.selectbox("Chọn hoa riêng cần sửa", ds_hoa_rieng_sua, key="sl_sua_hoa_rieng")
+
+            if hoa_rieng_sua_chon != "-- Chọn hoa để sửa --":
+                info_rieng_cu = du_lieu_hoi_dang_dung["_kho_hoa_rieng"][hoa_rieng_sua_chon]
+                
+                ten_rieng_moi = st.text_input("Tên hoa riêng mới", value=hoa_rieng_sua_chon, key=f"edit_rieng_ten_{hoa_rieng_sua_chon}")
+                
+                list_cap = ["Xanh lá", "Xanh dương", "Tím", "Cam", "Đỏ"]
+                idx_cap_rieng = list_cap.index(info_rieng_cu.get("cap", "Đỏ")) if info_rieng_cu.get("cap") in list_cap else 0
+                cap_rieng_moi = st.selectbox("Cấp bậc mới", options=list_cap, index=idx_cap_rieng, key=f"edit_rieng_cap_{hoa_rieng_sua_chon}")
+
+                file_anh_rieng_sua = st.file_uploader("Hình ảnh mới (Bỏ qua nếu không muốn đổi)", type=["png", "jpg", "jpeg"], key=f"edit_rieng_img_{hoa_rieng_sua_chon}")
+
+                if st.button("💾 Lưu cập nhật Kho Riêng", use_container_width=True):
+                    ten_clean_rieng = ten_rieng_moi.strip()
+                    if not ten_clean_rieng:
+                        st.error("Tên hoa riêng không được trống!")
+                    else:
+                        anh_rieng_moi = info_rieng_cu.get("anh")
+                        if file_anh_rieng_sua is not None:
+                            try:
+                                img = Image.open(file_anh_rieng_sua)
+                                if img.mode != "RGB":
+                                    img = img.convert("RGB")
+                                img.thumbnail((300, 300))
+                                buffer = io.BytesIO()
+                                img.save(buffer, format="JPEG", quality=70)
+                                anh_rieng_moi = base64.b64encode(buffer.getvalue()).decode('utf-8')
+                            except Exception:
+                                anh_rieng_moi = base64.b64encode(file_anh_rieng_sua.read()).decode('utf-8')
+
+                        # Đổi key nếu tên bị thay đổi
+                        if ten_clean_rieng != hoa_rieng_sua_chon:
+                            del du_lieu_hoi_dang_dung["_kho_hoa_rieng"][hoa_rieng_sua_chon]
+                            # Đồng bộ tên hoa mới cho các thành viên trong hội nếu đang sở hữu hoa cũ
+                            for tv, ds_h in du_lieu_hoi_dang_dung.items():
+                                if not tv.startswith("_") and isinstance(ds_h, list) and hoa_rieng_sua_chon in ds_h:
+                                    idx = ds_h.index(hoa_rieng_sua_chon)
+                                    ds_h[idx] = ten_clean_rieng
+
+                        du_lieu_hoi_dang_dung["_kho_hoa_rieng"][ten_clean_rieng] = {
+                            "cap": cap_rieng_moi,
+                            "anh": anh_rieng_moi
+                        }
+
+                        if luu_du_lieu():
+                            st.success("✅ Đã cập nhật hoa kho riêng!")
+                            st.rerun()
 
             st.write("---")
             st.markdown("### 🗑️ Xóa hoa trong Kho Riêng")
