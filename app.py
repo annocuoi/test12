@@ -9,7 +9,7 @@ from datetime import datetime
 import io
 from streamlit_local_storage import LocalStorage
 
-# Cấu hình giao diện ứng dụng (phải nằm trước mọi lệnh st.)
+# Cấu hình giao diện ứng dụng
 st.set_page_config(
     page_title="Quản Lý Hoa Hội",
     page_icon="🌸",
@@ -26,198 +26,50 @@ storage = LocalStorage()
 st.markdown(
     """
     <style>
-    /* Chặn thanh fixed dưới cùng */
-    div[class*="viewerBadge"] {
-        display:none !important;
-    }
-
-    /* Mobile + Desktop */
-    div[style*="bottom: 0"],
-    div[style*="bottom:0"] {
-        display:none !important;
-    }
+    div[class*="viewerBadge"] { display:none !important; }
+    div[style*="bottom: 0"], div[style*="bottom:0"] { display:none !important; }
+    [data-testid="stToolbar"] { display: none; }
+    [data-testid="stHeader"] { display: none; }
+    #MainMenu { visibility: hidden; }
+    footer { visibility: hidden; }
     
-    /* Ẩn thanh toolbar Streamlit trên cùng */
-    [data-testid="stToolbar"] {
-        display: none;
-    }
-    
-    /* Ẩn header */
-    [data-testid="stHeader"] {
-        display: none;
-    }
-    
-    /* Ẩn menu */
-    #MainMenu {
-        visibility: hidden;
-    }
-    
-    /* Ẩn footer */
-    footer {
-        visibility: hidden;
-    }
-    
-    /* Làm trong suốt ô selectbox */
     div[data-baseweb="select"] > div {
         background: rgba(255,255,255,0.35) !important;
         border-radius:12px !important;
     }
-
-    /* Bỏ nền xám bên trong */
-    div[data-baseweb="select"] input {
-        background: transparent !important;
-    }
-
-    /* Vùng chứa chữ */
-    div[data-baseweb="select"] span {
-        background: transparent !important;
-    }
+    div[data-baseweb="select"] input { background: transparent !important; caret-color: transparent !important; }
+    div[data-baseweb="select"] span { background: transparent !important; }
     
-    /* Ẩn gạch nhập trong selectbox */
-    div[data-baseweb="select"] input {
-        caret-color: transparent !important;
-    }
-    
-    /* Tiêu đề tự co mọi màn hình */
     .title-hoi {
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        gap:10px;
-        font-size:clamp(22px, 6vw, 38px);
-        font-weight:900;
-        color:#000000;
-        white-space:nowrap;
+        display:flex; justify-content:center; align-items:center; gap:10px;
+        font-size:clamp(22px, 6vw, 38px); font-weight:900; color:#000000; white-space:nowrap;
     }
+    div[data-testid="stElementToolbar"] { display: none; }
+    .title-hoi span { white-space:nowrap; }
     
-    /* Ẩn thanh công cụ dataframe */
-    div[data-testid="stElementToolbar"] {
-        display: none;
+    div[role="option"], div[role="option"] *, ul[role="listbox"] *, [data-baseweb="popover"] * {
+        color:#000000 !important; font-weight:700 !important;
     }
-
-    /* Icon hoa tự co */
-    .title-hoi span {
-        white-space:nowrap;
-    }
+    div[role="option"] { background:white !important; }
+    input, textarea { color:#000000 !important; font-weight:700 !important; }
+    input::placeholder { color:#555555 !important; }
     
-    /* Chữ trong danh sách xổ xuống selectbox */
-    div[role="option"],
-    div[role="option"] *,
-    ul[role="listbox"] *,
-    [data-baseweb="popover"] * {
-        color:#000000 !important;
-        font-weight:700 !important;
-    }
-
-    /* Nền dòng option */
-    div[role="option"] {
-        background:white !important;
-    }
-
-    /* Chữ trong ô nhập */
-    input {
-        color:#000000 !important;
-        font-weight:700 !important;
-    }
-
-    /* Placeholder */
-    input::placeholder {
-        color:#555555 !important;
-    }
-
-    /* Textarea nếu có */
-    textarea {
-        color:#000000 !important;
-    }
-
-    /* Chữ tab */
-    button[data-baseweb="tab"] *,
-    button[data-baseweb="tab"] p {
-        color:#111111 !important;
-    }
-
-    /* Radio lọc cấp */
-    [data-testid="stRadio"] * {
-        color:#111111 !important;
-    }
-
-    /* Metric */
-    [data-testid="stMetricLabel"],
-    [data-testid="stMetricValue"] {
-        color:#000 !important;
-    }
-
-    /* Tiêu đề */
-    h1, h2, h3, h4 {
-        color:#1e293b !important;
-        font-weight:900 !important;
-        text-shadow: 1px 1px 3px white;
-    }
-
-    /* Tab */
-    button[data-baseweb="tab"] p {
-        color:#111827 !important;
-        font-weight:800;
-    }
-
-    /* Số thống kê */
-    [data-testid="stMetricValue"] {
-        color:#000000 !important;
-        font-weight:900;
-    }
-
-    /* Tên hoa */
-    .flower-name {
-        color:#000 !important;
-        font-weight:900;
-        text-shadow:1px 1px 2px white;
-    }
-
-    /* Chữ trong nút */
-    button {
-        color:#111827 !important;
-        font-weight:700 !important;
-    }
-
-    /* Select + nhập liệu */
-    input, textarea {
-        color:black !important;
-        font-weight:700;
-    }
-
-    div[data-baseweb="select"] * {
-        color:black !important;
-    }
-
-    /* Bỏ nền trắng chính giữa */
-    .block-container {
-        background: transparent !important;
-    }
-
-    /* Các khung trắng */
-    div[data-testid="stVerticalBlock"] {
-        background: transparent !important;
-    }
-
-    /* Tab */
-    button[data-baseweb="tab"] {
-        background: rgba(255,255,255,0.15);
-        border-radius: 15px;
-        color: white;
-    }
-
-    /* Ô nhập */
-    input {
-        background: rgba(255,255,255,0.9)!important;
-        color:black!important;
-        border-radius:12px!important;
-    }
-
-    /* Selectbox */
-    div[data-baseweb="select"] {
-        background:white;
-        border-radius:12px;
-    }
+    button[data-baseweb="tab"] *, button[data-baseweb="tab"] p { color:#111111 !important; }
+    [data-testid="stRadio"] * { color:#111111 !important; }
+    [data-testid="stMetricLabel"], [data-testid="stMetricValue"] { color:#000 !important; }
+    
+    h1, h2, h3, h4 { color:#1e293b !important; font-weight:900 !important; text-shadow: 1px 1px 3px white; }
+    button[data-baseweb="tab"] p { color:#111827 !important; font-weight:800; }
+    [data-testid="stMetricValue"] { color:#000000 !important; font-weight:900; }
+    .flower-name { color:#000 !important; font-weight:900; text-shadow:1px 1px 2px white; }
+    button { color:#111827 !important; font-weight:700 !important; }
+    div[data-baseweb="select"] * { color:black !important; }
+    
+    .block-container { background: transparent !important; }
+    div[data-testid="stVerticalBlock"] { background: transparent !important; }
+    button[data-baseweb="tab"] { background: rgba(255,255,255,0.15); border-radius: 15px; color: white; }
+    input { background: rgba(255,255,255,0.9)!important; color:black!important; border-radius:12px!important; }
+    div[data-baseweb="select"] { background:white; border-radius:12px; }
     </style>
     """,
     unsafe_allow_html=True
@@ -225,67 +77,40 @@ st.markdown(
 
 GRID_STYLE = """
 <style>
-html, body{
-    overflow-x:hidden;
-    max-width:100%;
-}
-
+html, body{ overflow-x:hidden; max-width:100%; }
 .flower-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(80px, 1fr));
-    gap:18px;
-    width:100%;
-    max-width:100%;
-    overflow-x:hidden;
-    padding-right:15px;
-    box-sizing:border-box;
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(80px, 1fr));
+    gap:18px; width:100%; max-width:100%; overflow-x:hidden; padding-right:15px; box-sizing:border-box;
 }
-
-.flower-box{
-    text-align:center;
-}
-
+.flower-box{ text-align:center; }
 .flower-box img{
-    width:75px;
-    height:75px;
-    object-fit:cover;
-    border-radius:10px;
-    padding:3px;
-    box-shadow:0 3px 8px rgba(0,0,0,.3);
+    width:75px; height:75px; object-fit:cover; border-radius:10px; padding:3px; box-shadow:0 3px 8px rgba(0,0,0,.3);
 }
-
 .flower-box img.cap-do{ border:5px solid #ef4444; }
 .flower-box img.cap-tim{ border:5px solid #c084fc; }
 .flower-box img.cap-xanh-la{ border:5px solid #22c55e; }
 .flower-box img.cap-xanh-duong{ border:5px solid #38bdf8; }
 .flower-box img.cap-cam{ border:5px solid #f59e0b; }
-
-.flower-name{
-    font-size:13px;
-    font-weight:bold;
-    margin-top:5px;
-}
+.flower-name{ font-size:13px; font-weight:bold; margin-top:5px; }
 </style>
 """
 
 def anh_html(data):
+    """Xử lý chuẩn hóa dữ liệu ảnh ra link src Base64 cho thẻ HTML img"""
     if not data:
         return ""
-    try:
-        if isinstance(data, bytes):
-            img64 = base64.b64encode(data).decode('utf-8')
-        elif isinstance(data, str):
-            if data.startswith("b'") or data.startswith('b"'):
-                img64 = data[2:-1]
-            elif data.startswith("data:image"):
-                return data
-            else:
-                img64 = data
+    if isinstance(data, bytes):
+        img64 = base64.b64encode(data).decode('utf-8')
+    elif isinstance(data, str):
+        if data.startswith("data:image"):
+            return data
+        elif data.startswith("b'") or data.startswith('b"'):
+            img64 = data[2:-1]
         else:
-            return ""
-        return f"data:image/jpeg;base64,{img64}"
-    except Exception:
+            img64 = data
+    else:
         return ""
+    return f"data:image/jpeg;base64,{img64}"
 
 def background_image(file):
     try:
@@ -296,14 +121,9 @@ def background_image(file):
             <style>
             .stApp {{
                 background-image: url("data:image/png;base64,{data}");
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
+                background-size: cover; background-position: center; background-attachment: fixed;
             }}
-            .block-container {{
-                background: rgba(255,255,255,0.75);
-                border-radius:20px;
-            }}
+            .block-container {{ background: rgba(255,255,255,0.75); border-radius:20px; }}
             </style>
             """,
             unsafe_allow_html=True
@@ -314,18 +134,11 @@ def background_image(file):
 background_image("nen.jpg")
 
 def sap_xep_hoa(ds_hoa, kho_hoa_su_dung):
-    thu_tu_cap = {
-        "Đỏ": 1,
-        "Cam": 2,
-        "Tím": 3,
-        "Xanh dương": 4,
-        "Xanh lá": 5
-    }
+    thu_tu_cap = {"Đỏ": 1, "Cam": 2, "Tím": 3, "Xanh dương": 4, "Xanh lá": 5}
     return sorted(
         ds_hoa,
         key=lambda ten: thu_tu_cap.get(
-            kho_hoa_su_dung.get(ten, {}).get("cap", ""),
-            99
+            kho_hoa_su_dung.get(ten, {}).get("cap", ""), 99
         )
     )
 
@@ -353,10 +166,7 @@ API_URL = f"https://api.github.com/repos/{REPO_NAME}/contents/{FILE_PATH}"
 # 📂 HÀM ĐỌC DỮ LIỆU TỪ GITHUB
 # ====================================================
 def tai_du_lieu_tu_github():
-    mac_dinh = {
-        "kho_hoa_tong": {},
-        "tai_khoan": {}
-    }
+    mac_dinh = {"kho_hoa_tong": {}, "tai_khoan": {}}
     try:
         url_doc = f"https://api.github.com/repos/{REPO_NAME}/contents/{FILE_PATH}?ref={BRANCH}&t={time.time()}"
         headers_doc = {"Accept": "application/vnd.github.v3.raw"}
@@ -368,16 +178,7 @@ def tai_du_lieu_tu_github():
             chuoi_thong_tin = response.text.strip()
             if not chuoi_thong_tin or chuoi_thong_tin in ['""', '{}']:
                 return mac_dinh
-                
-            data = json.loads(chuoi_thong_tin)
-            kho_tong = data.get("kho_hoa_tong", {})
-            for ten_hoa in kho_tong:
-                if kho_tong[ten_hoa].get("anh"):
-                    try:
-                        kho_tong[ten_hoa]["anh"] = base64.b64decode(kho_tong[ten_hoa]["anh"].encode("utf-8"))
-                    except Exception:
-                        kho_tong[ten_hoa]["anh"] = None
-            return data
+            return json.loads(chuoi_thong_tin)
     except Exception as e:
         st.sidebar.warning(f"Đang kết nối đám mây... ({str(e)})")
     return mac_dinh
@@ -418,17 +219,7 @@ def doc_du_lieu_hoi(ten_hoi):
         r = requests.get(url, headers=HEADERS, timeout=10)
         if r.status_code == 200:
             noi_dung = r.json()["content"].replace("\n", "")
-            data = json.loads(base64.b64decode(noi_dung).decode("utf-8"))
-            
-            # Giải mã an toàn ảnh trong kho riêng
-            kho_rieng = data.get("_kho_hoa_rieng", {})
-            for ten_hoa, info in kho_rieng.items():
-                if info.get("anh") and isinstance(info["anh"], str):
-                    try:
-                        info["anh"] = base64.b64decode(info["anh"].encode("utf-8"))
-                    except Exception:
-                        pass
-            return data
+            return json.loads(base64.b64decode(noi_dung).decode("utf-8"))
         return {}
     except Exception:
         return {}
@@ -440,12 +231,8 @@ if not st.session_state.da_dang_nhap:
     st.markdown(
         """
         <div style='text-align:center; margin-top:30px; margin-bottom:25px;'>
-            <div style='font-size:clamp(24px,5vw,42px); font-weight:900; white-space:nowrap;'>
-                🌸 QUẢN LÝ HOA HỘI 🌸
-            </div>
-            <div style='font-size:clamp(12px,3vw,18px); font-weight:700; white-space:nowrap;'>
-                🌺 Bộ sưu tập • Hội viên • Xếp hạng 🌺
-            </div>
+            <div style='font-size:clamp(24px,5vw,42px); font-weight:900; white-space:nowrap;'>🌸 QUẢN LÝ HOA HỘI 🌸</div>
+            <div style='font-size:clamp(12px,3vw,18px); font-weight:700; white-space:nowrap;'>🌺 Bộ sưu tập • Hội viên • Xếp hạng 🌺</div>
         </div>
         """,
         unsafe_allow_html=True
@@ -547,7 +334,6 @@ with col_logout:
 # 💾 HÀM CHUẨN HÓA VÀ LƯU DỮ LIỆU
 # ----------------------------------------------------
 def chuan_hoa_data_hoi(data):
-    """Mã hóa toàn bộ dữ liệu bytes thành base64 string trước khi ép kiểu sang JSON"""
     import copy
     data_copy = copy.deepcopy(data)
     kho_rieng = data_copy.get("_kho_hoa_rieng", {})
@@ -567,7 +353,7 @@ def luu_du_lieu_len_github():
             if info.get("anh") and isinstance(info["anh"], bytes):
                 anh_str = base64.b64encode(info["anh"]).decode("utf-8")
             else:
-                anh_str = info.get("anh") if isinstance(info.get("anh"), str) else None
+                anh_str = info.get("anh")
                 
             kho_tong_copy[ten_hoa] = {
                 "cap": info["cap"],
@@ -761,9 +547,9 @@ if st.session_state.quyen == "admin":
                                 img.thumbnail((300, 300))
                                 buffer = io.BytesIO()
                                 img.save(buffer, format="JPEG", quality=70)
-                                du_lieu_anh = buffer.getvalue()
+                                du_lieu_anh = base64.b64encode(buffer.getvalue()).decode('utf-8')
                             except Exception:
-                                du_lieu_anh = file_anh.read()
+                                du_lieu_anh = base64.b64encode(file_anh.read()).decode('utf-8')
         
                         st.session_state.kho_hoa_tong[ten_hoa_clean] = {
                             "cap": cap_bac_moi,
@@ -898,9 +684,9 @@ if st.session_state.quyen == "hoi":
                             img.thumbnail((300, 300))
                             buffer = io.BytesIO()
                             img.save(buffer, format="JPEG", quality=70)
-                            data_anh = buffer.getvalue()
+                            data_anh = base64.b64encode(buffer.getvalue()).decode('utf-8')
                         except Exception:
-                            data_anh = file_anh_hoi.read()
+                            data_anh = base64.b64encode(file_anh_hoi.read()).decode('utf-8')
                             
                     du_lieu_hoi_dang_dung["_kho_hoa_rieng"][ten_clean] = {
                         "cap": cap_hoa_hoi,
@@ -1506,8 +1292,6 @@ if st.session_state.quyen == "admin":
                 ]
                 for tk in ds_xoa:
                     del st.session_state.tai_khoan[tk]
-
-                xoa_du_lieu_hoi(khach_xoa)
 
                 if luu_du_lieu_len_github():
                     st.session_state.thong_bao_xoa = f"✅ Đã xóa hội {khach_xoa}"
