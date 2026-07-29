@@ -242,71 +242,105 @@ def doc_du_lieu_hoi(ten_hoi):
 if not st.session_state.da_dang_nhap:
     st.markdown(
         """
-        <div style='text-align:center; margin-top:30px; margin-bottom:25px;'>
-            <div style='font-size:clamp(24px,5vw,42px); font-weight:900; white-space:nowrap;'>🌸 QUẢN LÝ HOA HỘI 🌸</div>
-            <div style='font-size:clamp(12px,3vw,18px); font-weight:700; white-space:nowrap;'>🌺 Bộ sưu tập • Hội viên • Xếp hạng 🌺</div>
+        <div style='
+            text-align:center;
+            margin-top:30px;
+            margin-bottom:25px;
+        '>
+
+        <div style='
+            font-size:clamp(24px,5vw,42px);
+            font-weight:900;
+            white-space:nowrap;
+        '>
+        🌸 QUẢN LÝ HOA HỘI 🌸
+        </div>
+
+        <div style='
+            font-size:clamp(12px,3vw,18px);
+            font-weight:700;
+            white-space:nowrap;
+        '>
+        🌺 Bộ sưu tập • Hội viên • Xếp hạng 🌺
+        </div>
+
         </div>
         """,
         unsafe_allow_html=True
     )
-    
-    tk_luu = storage.getItem("nho_tai_khoan_login") or ""
-    mk_luu = storage.getItem("nho_mat_khau_login") or ""
+
+    # 1. Nhớ tài khoản theo trình duyệt
+    tk_luu = storage.getItem("nho_tai_khoan_login")
+    mk_luu = storage.getItem("nho_mat_khau_login")
     tick_luu = storage.getItem("nho_tick_login")
-    tick_mac_dinh = True if tick_luu == "1" else False
 
-    if "user_login_val" not in st.session_state:
-        st.session_state["user_login_val"] = tk_luu
-    if "pass_login_val" not in st.session_state:
-        st.session_state["pass_login_val"] = mk_luu
+    # 2. Tự đồng bộ vào session_state ngay khi LocalStorage trả về dữ liệu chuẩn
+    if tk_luu and tk_luu != st.session_state.get("txt_user_login"):
+        st.session_state["txt_user_login"] = str(tk_luu)
 
+    if mk_luu and mk_luu != st.session_state.get("txt_pass_login"):
+        st.session_state["txt_pass_login"] = str(mk_luu)
+
+    # 3. Tạo key trực tiếp để ô input luôn bắt kịp dữ liệu
     ten_dang_nhap = st.text_input(
-        "Tài khoản", 
-        value=st.session_state["user_login_val"], 
+        "Tài khoản",
         placeholder="Nhập tài khoản..",
-        key="txt_user_field_no_autofill"
-    )
-    
-    mat_khau_nhap = st.text_input(
-        "Mật khẩu", 
-        value=st.session_state["pass_login_val"], 
-        type="password", 
-        placeholder="Nhập mật khẩu...",
-        key="txt_pass_field_no_autofill"
+        key="txt_user_login"
     )
 
-    nho_dang_nhap = st.checkbox("💾 Nhớ tài khoản và mật khẩu", value=tick_mac_dinh)
+    mat_khau_nhap = st.text_input(
+        "Mật khẩu",
+        type="password",
+        placeholder="Nhập mật khẩu...",
+        key="txt_pass_login"
+    )
+
+    tick_mac_dinh = True if tick_luu == "1" or tick_luu is None else False
+
+    nho_dang_nhap = st.checkbox(
+        "💾 Nhớ tài khoản và mật khẩu",
+        value=tick_mac_dinh
+    )
 
     if st.button("🔐 Đăng Nhập", use_container_width=True):
+
         dang_nhap_ok = False
-        quyen_login = None
-        chu_so_huu = None
 
-        user_clean = ten_dang_nhap.strip()
-        pass_clean = mat_khau_nhap.strip()
-
+        # admin + hội
         if (
-            user_clean in st.session_state.tai_khoan
-            and pass_clean == st.session_state.tai_khoan[user_clean].get("pass")
+            ten_dang_nhap in st.session_state.tai_khoan
+            and mat_khau_nhap == st.session_state.tai_khoan[ten_dang_nhap].get("pass")
         ):
-            info_login = st.session_state.tai_khoan[user_clean]
+
+            info_login = st.session_state.tai_khoan[ten_dang_nhap]
+
             if info_login.get("trang_thai", "hoat_dong") == "khoa":
                 st.error("⛔ Tài khoản đã ngưng hoạt động")
                 st.stop()
 
             dang_nhap_ok = True
             quyen_login = info_login["quyen"]
+            chu_so_huu = None
+
+        # tài khoản xem trong từng hội
         else:
             for ten_hoi, info in st.session_state.tai_khoan.items():
-                if info.get("quyen") != "hoi" or info.get("trang_thai", "hoat_dong") == "khoa":
+                if info.get("quyen") != "hoi":
+                    continue
+                if info.get("trang_thai", "hoat_dong") == "khoa":
                     continue
                 data_hoi = doc_du_lieu_hoi(ten_hoi)
-                tk_xem = data_hoi.get("_tai_khoan_xem", {})
+
+                tk_xem = data_hoi.get(
+                    "_tai_khoan_xem",
+                    {}
+                )
 
                 if (
-                    user_clean == tk_xem.get("user")
-                    and pass_clean == tk_xem.get("pass")
+                    ten_dang_nhap == tk_xem.get("user")
+                    and mat_khau_nhap == tk_xem.get("pass")
                 ):
+
                     dang_nhap_ok = True
                     quyen_login = "xem"
                     chu_so_huu = ten_hoi
@@ -314,16 +348,44 @@ if not st.session_state.da_dang_nhap:
                     break
 
         if dang_nhap_ok:
-            if nho_dang_nhap:
-                storage.setItem("nho_tick_login", "1", key="luu_tick_login")
-                storage.setItem("nho_tai_khoan_login", user_clean, key="luu_tk_login")
-                storage.setItem("nho_mat_khau_login", pass_clean, key="luu_mk_login")
-            else:
-                storage.setItem("nho_tick_login", "0", key="bo_tick_login")
-                storage.setItem("nho_tai_khoan_login", "", key="xoa_tk_login")
-                storage.setItem("nho_mat_khau_login", "", key="xoa_mk_login")
 
-            time.sleep(0.3)
+            # =====================
+            # NHỚ ĐĂNG NHẬP MÁY NÀY
+            # =====================
+
+            if nho_dang_nhap:
+                storage.setItem(
+                    "nho_tick_login",
+                    "1",
+                    key="luu_tick_login"
+                )
+
+                storage.setItem(
+                    "nho_tai_khoan_login",
+                    ten_dang_nhap,
+                    key="luu_tk_login"
+                )
+
+                storage.setItem(
+                    "nho_mat_khau_login",
+                    mat_khau_nhap,
+                    key="luu_mk_login"
+                )
+
+            else:
+                storage.setItem(
+                    "nho_tick_login",
+                    "0",
+                    key="bo_tick_login"
+                )
+
+                try:
+                    storage.setItem("nho_tai_khoan_login", "", key="xoa_tk_login")
+                    storage.setItem("nho_mat_khau_login", "", key="xoa_mk_login")
+                except Exception:
+                    pass
+
+            time.sleep(0.4)
 
             st.session_state.da_dang_nhap = True
             st.session_state.quyen = quyen_login
@@ -332,10 +394,11 @@ if not st.session_state.da_dang_nhap:
                 st.session_state.ten_tai_khoan = chu_so_huu
                 st.session_state.chu_so_huu = chu_so_huu
             else:
-                st.session_state.ten_tai_khoan = user_clean
+                st.session_state.ten_tai_khoan = ten_dang_nhap
                 st.session_state.chu_so_huu = None
 
             st.rerun()
+
         else:
             st.error("Sai tài khoản hoặc mật khẩu")
 
@@ -1291,7 +1354,7 @@ if st.session_state.quyen != "admin":
                                     st.rerun()
 
         with tab2:
-            st.markdown("### 👥 Dàn hoa Toàn Hội")
+            st.markdown("### 👥 Hoa Toàn Hội")
             
             # --- BỔ SUNG Ô TÌM KIẾM TÊN HOA ---
             tim_hoa_toan_hoi = st.text_input("🔍 Tìm hoa Toàn Hội", placeholder="Nhập tên hoa cần tìm...", key="txt_tim_hoa_toan_hoi")
