@@ -329,8 +329,8 @@ try:
 except Exception:
     GITHUB_TOKEN = ""
 
-REPO_NAME = "annocuoi/test12"
-FILE_PATH = "du_lieu_chung.json"
+REPO_NAME = "annocuoi/Hoa-vien-online"
+FILE_PATH = "du_lieu_hoa1.json"
 BRANCH = "main"
 
 HEADERS = {
@@ -410,12 +410,12 @@ def doc_du_lieu_hoi(ten_hoi):
             noi_dung = r.json()["content"].replace("\n", "")
             data = json.loads(base64.b64decode(noi_dung).decode("utf-8"))
             
-            # Giải mã ảnh trong kho riêng của hội
+            # Giải mã an toàn ảnh trong kho riêng
             kho_rieng = data.get("_kho_hoa_rieng", {})
-            for ten_hoa in kho_rieng:
-                if kho_rieng[ten_hoa].get("anh") and isinstance(kho_rieng[ten_hoa]["anh"], str):
+            for ten_hoa, info in kho_rieng.items():
+                if info.get("anh") and isinstance(info["anh"], str):
                     try:
-                        kho_rieng[ten_hoa]["anh"] = base64.b64decode(kho_rieng[ten_hoa]["anh"].encode("utf-8"))
+                        info["anh"] = base64.b64decode(info["anh"].encode("utf-8"))
                     except Exception:
                         pass
             return data
@@ -537,7 +537,7 @@ with col_logout:
 # 💾 HÀM CHUẨN HÓA VÀ LƯU DỮ LIỆU
 # ----------------------------------------------------
 def chuan_hoa_data_hoi(data):
-    """Mã hóa toàn bộ bytes thành base64 string trước khi ép kiểu sang JSON"""
+    """Mã hóa toàn bộ dữ liệu bytes thành base64 string trước khi ép kiểu sang JSON"""
     import copy
     data_copy = copy.deepcopy(data)
     kho_rieng = data_copy.get("_kho_hoa_rieng", {})
@@ -1229,7 +1229,7 @@ if st.session_state.quyen != "admin":
                         if "Xanh dương" in chon_cap and info.get("cap") != "Xanh dương": continue
                         if "Xanh lá" in chon_cap and info.get("cap") != "Xanh lá": continue
 
-                        link_anh = anh_html(info["anh"])
+                        link_anh = anh_html(info.get("anh"))
                         cap = info.get("cap", "")
                         mau = {
                             "Đỏ": "#ef4444", "Tím": "#c084fc", "Xanh lá": "#22c55e",
@@ -1301,7 +1301,7 @@ if st.session_state.quyen != "admin":
 
                     owners = [tv for tv, hoa_list in du_lieu_hoi_dang_dung.items() if ten_hoa in hoa_list]
                     if owners:
-                        link_anh = anh_html(info["anh"])
+                        link_anh = anh_html(info.get("anh"))
                         mau = {
                             "Đỏ": "#ef4444", "Tím": "#c084fc", "Xanh lá": "#22c55e",
                             "Xanh dương": "#38bdf8", "Cam": "#f59e0b"
