@@ -736,120 +736,188 @@ if st.session_state.quyen == "hoi":
                 
             if "key_them_hoa_hoi" not in st.session_state:
                 st.session_state.key_them_hoa_hoi = 0
+
+            # --- 1. THÊM HOA KHO RIÊNG ---
+            with st.expander("➕ Thêm hoa mới vào Kho Riêng", expanded=False):
+                ten_hoa_hoi = st.text_input(
+                    "Tên hoa mới",
+                    placeholder="Nhập tên hoa mới...",
+                    key=f"txt_ten_hoa_hoi_{st.session_state.key_them_hoa_hoi}"
+                )
+                cap_hoa_hoi = st.selectbox(
+                    "Cấp bậc",
+                    options=["Xanh lá", "Xanh dương", "Tím", "Cam", "Đỏ"],
+                    key="sl_cap_hoa_hoi"
+                )
+                file_anh_hoi = st.file_uploader(
+                    "Hình ảnh hoa",
+                    type=["png", "jpg", "jpeg"],
+                    key=f"f_anh_hoi_{st.session_state.key_them_hoa_hoi}"
+                )
                 
-            ten_hoa_hoi = st.text_input(
-                "Tên hoa mới",
-                placeholder="Nhập tên hoa mới...",
-                key=f"txt_ten_hoa_hoi_{st.session_state.key_them_hoa_hoi}"
-            )
-            cap_hoa_hoi = st.selectbox(
-                "Cấp bậc",
-                options=["Xanh lá", "Xanh dương", "Tím", "Cam", "Đỏ"],
-                key="sl_cap_hoa_hoi"
-            )
-            file_anh_hoi = st.file_uploader(
-                "Hình ảnh hoa",
-                type=["png", "jpg", "jpeg"],
-                key=f"f_anh_hoi_{st.session_state.key_them_hoa_hoi}"
-            )
-            
-            if st.button("📥 Thêm vào Kho riêng của Hội", use_container_width=True):
-                ten_clean = ten_hoa_hoi.strip()
-                if not ten_clean:
-                    st.error("Vui lòng nhập tên hoa!")
-                elif ten_clean in kho_hoa_kha_dung:
-                    st.warning("Hoa này đã tồn tại trong kho chung hoặc kho riêng!")
-                else:
-                    data_anh = None
-                    if file_anh_hoi is not None:
-                        try:
-                            img = Image.open(file_anh_hoi)
-                            if img.mode != "RGB":
-                                img = img.convert("RGB")
-                            img.thumbnail((300, 300))
-                            buffer = io.BytesIO()
-                            img.save(buffer, format="JPEG", quality=70)
-                            data_anh = base64.b64encode(buffer.getvalue()).decode('utf-8')
-                        except Exception:
-                            data_anh = base64.b64encode(file_anh_hoi.read()).decode('utf-8')
-                            
-                    du_lieu_hoi_dang_dung["_kho_hoa_rieng"][ten_clean] = {
-                        "cap": cap_hoa_hoi,
-                        "anh": data_anh
-                    }
-                    
-                    if luu_du_lieu():
-                        st.session_state.key_them_hoa_hoi += 1
-                        st.success(f"✅ Đã thêm '{ten_clean}' vào kho riêng thành công!")
-                        st.rerun()
-
-            st.write("---")
-            
-            # --- PHẦN BỔ SUNG: CHỈNH SỬA HOA KHO RIÊNG (HỘI) ---
-            st.markdown("### ✏️ Chỉnh sửa hoa Kho Riêng")
-            ds_hoa_rieng_sua = ["-- Chọn hoa để sửa --"] + list(du_lieu_hoi_dang_dung.get("_kho_hoa_rieng", {}).keys())
-            hoa_rieng_sua_chon = st.selectbox("Chọn hoa riêng cần sửa", ds_hoa_rieng_sua, key="sl_sua_hoa_rieng")
-
-            if hoa_rieng_sua_chon != "-- Chọn hoa để sửa --":
-                info_rieng_cu = du_lieu_hoi_dang_dung["_kho_hoa_rieng"][hoa_rieng_sua_chon]
-                
-                ten_rieng_moi = st.text_input("Tên hoa riêng mới", value=hoa_rieng_sua_chon, key=f"edit_rieng_ten_{hoa_rieng_sua_chon}")
-                
-                list_cap = ["Xanh lá", "Xanh dương", "Tím", "Cam", "Đỏ"]
-                idx_cap_rieng = list_cap.index(info_rieng_cu.get("cap", "Đỏ")) if info_rieng_cu.get("cap") in list_cap else 0
-                cap_rieng_moi = st.selectbox("Cấp bậc mới", options=list_cap, index=idx_cap_rieng, key=f"edit_rieng_cap_{hoa_rieng_sua_chon}")
-
-                file_anh_rieng_sua = st.file_uploader("Hình ảnh mới (Bỏ qua nếu không muốn đổi)", type=["png", "jpg", "jpeg"], key=f"edit_rieng_img_{hoa_rieng_sua_chon}")
-
-                if st.button("💾 Lưu cập nhật Kho Riêng", use_container_width=True):
-                    ten_clean_rieng = ten_rieng_moi.strip()
-                    if not ten_clean_rieng:
-                        st.error("Tên hoa riêng không được trống!")
+                if st.button("📥 Thêm vào Kho riêng của Hội", use_container_width=True):
+                    ten_clean = ten_hoa_hoi.strip()
+                    if not ten_clean:
+                        st.error("Vui lòng nhập tên hoa!")
+                    elif ten_clean in kho_hoa_kha_dung:
+                        st.warning("Hoa này đã tồn tại trong kho chung hoặc kho riêng!")
                     else:
-                        anh_rieng_moi = info_rieng_cu.get("anh")
-                        if file_anh_rieng_sua is not None:
+                        data_anh = None
+                        if file_anh_hoi is not None:
                             try:
-                                img = Image.open(file_anh_rieng_sua)
+                                img = Image.open(file_anh_hoi)
                                 if img.mode != "RGB":
                                     img = img.convert("RGB")
                                 img.thumbnail((300, 300))
                                 buffer = io.BytesIO()
                                 img.save(buffer, format="JPEG", quality=70)
-                                anh_rieng_moi = base64.b64encode(buffer.getvalue()).decode('utf-8')
+                                data_anh = base64.b64encode(buffer.getvalue()).decode('utf-8')
                             except Exception:
-                                anh_rieng_moi = base64.b64encode(file_anh_rieng_sua.read()).decode('utf-8')
-
-                        # Đổi key nếu tên bị thay đổi
-                        if ten_clean_rieng != hoa_rieng_sua_chon:
-                            del du_lieu_hoi_dang_dung["_kho_hoa_rieng"][hoa_rieng_sua_chon]
-                            # Đồng bộ tên hoa mới cho các thành viên trong hội nếu đang sở hữu hoa cũ
-                            for tv, ds_h in du_lieu_hoi_dang_dung.items():
-                                if not tv.startswith("_") and isinstance(ds_h, list) and hoa_rieng_sua_chon in ds_h:
-                                    idx = ds_h.index(hoa_rieng_sua_chon)
-                                    ds_h[idx] = ten_clean_rieng
-
-                        du_lieu_hoi_dang_dung["_kho_hoa_rieng"][ten_clean_rieng] = {
-                            "cap": cap_rieng_moi,
-                            "anh": anh_rieng_moi
+                                data_anh = base64.b64encode(file_anh_hoi.read()).decode('utf-8')
+                                
+                        du_lieu_hoi_dang_dung["_kho_hoa_rieng"][ten_clean] = {
+                            "cap": cap_hoa_hoi,
+                            "anh": data_anh
                         }
-
+                        
                         if luu_du_lieu():
-                            st.success("✅ Đã cập nhật hoa kho riêng!")
+                            st.session_state.key_them_hoa_hoi += 1
+                            st.success(f"✅ Đã thêm '{ten_clean}' vào kho riêng thành công!")
                             st.rerun()
+
+            # --- 2. CHỈNH SỬA HOA KHO RIÊNG ---
+            with st.expander("✏️ Chỉnh sửa hoa Kho Riêng", expanded=False):
+                ds_hoa_rieng_sua = ["-- Chọn hoa để sửa --"] + list(du_lieu_hoi_dang_dung.get("_kho_hoa_rieng", {}).keys())
+                hoa_rieng_sua_chon = st.selectbox("Chọn hoa riêng cần sửa", ds_hoa_rieng_sua, key="sl_sua_hoa_rieng")
+
+                if hoa_rieng_sua_chon != "-- Chọn hoa để sửa --":
+                    info_rieng_cu = du_lieu_hoi_dang_dung["_kho_hoa_rieng"][hoa_rieng_sua_chon]
+                    
+                    ten_rieng_moi = st.text_input("Tên hoa riêng mới", value=hoa_rieng_sua_chon, key=f"edit_rieng_ten_{hoa_rieng_sua_chon}")
+                    
+                    list_cap = ["Xanh lá", "Xanh dương", "Tím", "Cam", "Đỏ"]
+                    idx_cap_rieng = list_cap.index(info_rieng_cu.get("cap", "Đỏ")) if info_rieng_cu.get("cap") in list_cap else 0
+                    cap_rieng_moi = st.selectbox("Cấp bậc mới", options=list_cap, index=idx_cap_rieng, key=f"edit_rieng_cap_{hoa_rieng_sua_chon}")
+
+                    file_anh_rieng_sua = st.file_uploader("Hình ảnh mới (Bỏ qua nếu không muốn đổi)", type=["png", "jpg", "jpeg"], key=f"edit_rieng_img_{hoa_rieng_sua_chon}")
+
+                    if st.button("💾 Lưu cập nhật Kho Riêng", use_container_width=True):
+                        ten_clean_rieng = ten_rieng_moi.strip()
+                        if not ten_clean_rieng:
+                            st.error("Tên hoa riêng không được trống!")
+                        else:
+                            anh_rieng_moi = info_rieng_cu.get("anh")
+                            if file_anh_rieng_sua is not None:
+                                try:
+                                    img = Image.open(file_anh_rieng_sua)
+                                    if img.mode != "RGB":
+                                        img = img.convert("RGB")
+                                    img.thumbnail((300, 300))
+                                    buffer = io.BytesIO()
+                                    img.save(buffer, format="JPEG", quality=70)
+                                    anh_rieng_moi = base64.b64encode(buffer.getvalue()).decode('utf-8')
+                                except Exception:
+                                    anh_rieng_moi = base64.b64encode(file_anh_rieng_sua.read()).decode('utf-8')
+
+                            if ten_clean_rieng != hoa_rieng_sua_chon:
+                                del du_lieu_hoi_dang_dung["_kho_hoa_rieng"][hoa_rieng_sua_chon]
+                                for tv, ds_h in du_lieu_hoi_dang_dung.items():
+                                    if not tv.startswith("_") and isinstance(ds_h, list) and hoa_rieng_sua_chon in ds_h:
+                                        idx = ds_h.index(hoa_rieng_sua_chon)
+                                        ds_h[idx] = ten_clean_rieng
+
+                            du_lieu_hoi_dang_dung["_kho_hoa_rieng"][ten_clean_rieng] = {
+                                "cap": cap_rieng_moi,
+                                "anh": anh_rieng_moi
+                            }
+
+                            if luu_du_lieu():
+                                st.success("✅ Đã cập nhật hoa kho riêng!")
+                                st.rerun()
 
             st.write("---")
-            st.markdown("### 🗑️ Xóa hoa trong Kho Riêng")
-            ds_hoa_rieng = list(du_lieu_hoi_dang_dung.get("_kho_hoa_rieng", {}).keys())
-            if not ds_hoa_rieng:
-                st.caption("Kho riêng chưa có hoa nào.")
+
+            # --- 3. HIỂN THỊ DANH SÁCH & LƯỚI HOA KHO RIÊNG (MỚI) ---
+            st.markdown("### 📋 Danh sách hoa Kho Riêng")
+            kho_rieng_data = du_lieu_hoi_dang_dung.get("_kho_hoa_rieng", {})
+            
+            if not kho_rieng_data:
+                st.info("Kho riêng chưa có hoa nào.")
             else:
-                hoa_rieng_xoa = st.selectbox("Chọn hoa riêng muốn xóa", ["-- Chọn --"] + ds_hoa_rieng, key="sl_xoa_hoa_rieng")
-                if st.button("❌ Xóa hoa này khỏi Kho Riêng", type="primary", use_container_width=True):
-                    if hoa_rieng_xoa != "-- Chọn --":
-                        del du_lieu_hoi_dang_dung["_kho_hoa_rieng"][hoa_rieng_xoa]
+                ds_tim_rieng = ["-- Chọn --"] + list(kho_rieng_data.keys())
+                tim_hoa_rieng = st.selectbox("🔍 Tìm hoa hoặc Chọn hoa cần xóa khỏi Kho Riêng", ds_tim_rieng, key="tim_hoa_kho_rieng")
+                
+                if tim_hoa_rieng != "-- Chọn --":
+                    if st.button(f"🗑️ Xóa hoa '{tim_hoa_rieng}' khỏi Kho Riêng", type="primary", use_container_width=True):
+                        del du_lieu_hoi_dang_dung["_kho_hoa_rieng"][tim_hoa_rieng]
                         if luu_du_lieu():
-                            st.success(f"✅ Đã xóa '{hoa_rieng_xoa}' khỏi kho riêng")
+                            st.success(f"✅ Đã xóa hoa {tim_hoa_rieng}")
                             st.rerun()
+
+                dem_cap_rieng = {"Đỏ": 0, "Cam": 0, "Tím": 0, "Xanh dương": 0, "Xanh lá": 0}
+                for ten_h, info_h in kho_rieng_data.items():
+                    c_h = info_h.get("cap", "")
+                    if c_h in dem_cap_rieng:
+                        dem_cap_rieng[c_h] += 1
+
+                tong_rieng = sum(dem_cap_rieng.values())
+
+                def reset_tim_hoa_rieng():
+                    st.session_state.tim_hoa_kho_rieng = "-- Chọn --"
+
+                loc_cap_rieng = st.radio(
+                    "Lọc cấp",
+                    [
+                        f"🌈 Tất cả: {tong_rieng}",
+                        f"🔴 Đỏ: {dem_cap_rieng['Đỏ']}",
+                        f"🟠 Cam: {dem_cap_rieng['Cam']}",
+                        f"🟣 Tím: {dem_cap_rieng['Tím']}",
+                        f"🔵 Xanh dương: {dem_cap_rieng['Xanh dương']}",
+                        f"🟢 Xanh lá: {dem_cap_rieng['Xanh lá']}",
+                    ],
+                    horizontal=True,
+                    key="loc_cap_kho_rieng",
+                    on_change=reset_tim_hoa_rieng
+                )
+
+                loc_clean_rieng = (
+                    loc_cap_rieng.split(":")[0]
+                    .replace("🌈 ", "").replace("🔴 ", "").replace("🟠 ", "")
+                    .replace("🟣 ", "").replace("🔵 ", "").replace("🟢 ", "")
+                )
+            
+                ds_loc_rieng = {}
+                for ten_h, info_h in kho_rieng_data.items():
+                    if tim_hoa_rieng != "-- Chọn --" and tim_hoa_rieng != ten_h:
+                        continue
+                    if loc_clean_rieng != "Tất cả" and info_h["cap"] != loc_clean_rieng:
+                        continue
+                    ds_loc_rieng[ten_h] = info_h
+            
+                if not ds_loc_rieng:
+                    st.info("Không tìm thấy hoa.")
+                else:
+                    html_r = '<div class="flower-grid">'
+                    for ten_h in sap_xep_hoa(ds_loc_rieng.keys(), kho_rieng_data):
+                        info_h = ds_loc_rieng[ten_h]
+                        mau_cap_r = {
+                            "Xanh lá": "cap-xanh-la",
+                            "Xanh dương": "cap-xanh-duong",
+                            "Tím": "cap-tim",
+                            "Cam": "cap-cam",
+                            "Đỏ": "cap-do"
+                        }.get(info_h["cap"], "cap-do")
+
+                        link_anh_r = anh_html(info_h.get("anh"))
+                        html_r += f"""
+                        <div class="flower-box">
+                            <img class="{mau_cap_r}" src="{link_anh_r}">
+                            <div class="flower-name">{ten_h}</div>
+                        </div>
+                        """
+                    html_r += "</div>"
+            
+                    components.html(GRID_STYLE + html_r, height=450, scrolling=True)
 
         with tab_cap_phat:
             st.markdown("## 👥 Thêm + Xóa Hội Viên")
