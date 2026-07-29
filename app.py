@@ -271,11 +271,21 @@ html, body{
 def anh_html(data):
     if not data:
         return ""
-    if isinstance(data, bytes):
-        img64 = base64.b64encode(data).decode()
-    else:
-        img64 = data
-    return f"data:image/jpeg;base64,{img64}"
+    try:
+        if isinstance(data, bytes):
+            img64 = base64.b64encode(data).decode('utf-8')
+        elif isinstance(data, str):
+            if data.startswith("b'") or data.startswith('b"'):
+                img64 = data[2:-1]
+            elif data.startswith("data:image"):
+                return data
+            else:
+                img64 = data
+        else:
+            return ""
+        return f"data:image/jpeg;base64,{img64}"
+    except Exception:
+        return ""
 
 def background_image(file):
     try:
@@ -826,7 +836,7 @@ if st.session_state.quyen == "admin":
                             "Đỏ": "cap-do"
                         }.get(info["cap"], "cap-do")
 
-                        link_anh = anh_html(info["anh"])
+                        link_anh = anh_html(info.get("anh"))
                         html += f"""
                         <div class="flower-box">
                             <img class="{mau_cap}" src="{link_anh}">
