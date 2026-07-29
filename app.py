@@ -96,27 +96,23 @@ html, body{ overflow-x:hidden; max-width:100%; }
 """
 
 def anh_html(data):
-    """Xử lý hiển thị ảnh an toàn, ẩn chuỗi rác và cảnh báo ảnh lỗi"""
-    img_loi = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 75 75'><rect width='75' height='75' fill='%23f1f5f9'/><text x='50%' y='50%' font-size='11' font-weight='bold' fill='%23ef4444' text-anchor='middle' dy='.3em'>⚠️ Ảnh lỗi</text></svg>"
     if not data:
-        return img_loi
+        return ""
     try:
         if isinstance(data, bytes):
             img64 = base64.b64encode(data).decode('utf-8')
         elif isinstance(data, str):
-            if "\\xff" in data or "\\x00" in data or data.startswith(">>") or "DIC" in data:
-                return img_loi
-            if data.startswith("data:image"):
-                return data
-            elif data.startswith("b'") or data.startswith('b"'):
+            if data.startswith("b'") or data.startswith('b"'):
                 img64 = data[2:-1]
+            elif data.startswith("data:image"):
+                return data
             else:
                 img64 = data
         else:
-            return img_loi
+            return ""
         return f"data:image/jpeg;base64,{img64}"
     except Exception:
-        return img_loi
+        return ""
 
 def background_image(file):
     try:
