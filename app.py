@@ -96,21 +96,30 @@ html, body{ overflow-x:hidden; max-width:100%; }
 """
 
 def anh_html(data):
-    """Xử lý chuẩn hóa dữ liệu ảnh ra link src Base64 cho thẻ HTML img"""
+    """Xử lý hiển thị ảnh an toàn, ẩn chuỗi rác và cảnh báo ảnh lỗi"""
     if not data:
-        return ""
-    if isinstance(data, bytes):
-        img64 = base64.b64encode(data).decode('utf-8')
-    elif isinstance(data, str):
-        if data.startswith("data:image"):
-            return data
-        elif data.startswith("b'") or data.startswith('b"'):
-            img64 = data[2:-1]
+        # Ảnh thế mạng khi không có ảnh hoặc dữ liệu bị lỗi
+        return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 75 75'><rect width='75' height='75' fill='%23f1f5f9'/><text x='50%' y='50%' font-size='11' font-weight='bold' fill='%23ef4444' text-anchor='middle' dy='.3em'>⚠️ Ảnh lỗi</text></svg>"
+    try:
+        if isinstance(data, bytes):
+            img64 = base64.b64encode(data).decode('utf-8')
+        elif isinstance(data, str):
+            # Nếu phát hiện chuỗi chứa ký tự nhị phân rác lỗi cũ
+            if "\\xff" in data or "\\x00" in data or data.startswith(">>") or "DIC" in data:
+                return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 75 75'><rect width='75' height='75' fill='%23f1f5f9'/><text x='50%' y='50%' font-size='11' font-weight='bold' fill='%23ef4444' text-anchor='middle' dy='.3em'>⚠️ Ảnh lỗi</text></svg>"
+            
+            if data.startswith("data:image"):
+                return data
+            elif data.startswith("b'") or data.startswith('b"'):
+                img64 = data[2:-1]
+            else:
+                img64 = data
         else:
-            img64 = data
-    else:
-        return ""
-    return f"data:image/jpeg;base64,{img64}"
+            return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 75 75'><rect width='75' height='75' fill='%23f1f5f9'/><text x='50%' y='50%' font-size='11' font-weight='bold' fill='%23ef4444' text-anchor='middle' dy='.3em'>⚠️ Ảnh lỗi</text></svg>"
+        
+        return f"data:image/jpeg;base64,{img64}"
+    except Exception:
+        return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 75 75'><rect width='75' height='75' fill='%23f1f5f9'/><text x='50%' y='50%' font-size='11' font-weight='bold' fill='%23ef4444' text-anchor='middle' dy='.3em'>⚠️ Ảnh lỗi</text></svg>"
 
 def background_image(file):
     try:
