@@ -33,6 +33,15 @@ st.markdown(
     #MainMenu { visibility: hidden; }
     footer { visibility: hidden; }
     
+    /* Vô hiệu hóa style Autofill của Chrome/Edge */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px white inset !important;
+        -webkit-text-fill-color: #000000 !important;
+    }
+    
     div[data-baseweb="select"] > div {
         background: rgba(255,255,255,0.35) !important;
         border-radius:12px !important;
@@ -95,7 +104,7 @@ html, body{ overflow-x:hidden; max-width:100%; }
 </style>
 """
 
-# HÀM ANH_HTML CỦA BẠN
+# HÀM ANH_HTML NGUYÊN BẢN CỦA BẠN
 def anh_html(data):
     if not data:
         return ""
@@ -228,7 +237,7 @@ def doc_du_lieu_hoi(ten_hoi):
         return {}
 
 # ==========================
-# GIAO DIỆN ĐĂNG NHẬP
+# GIAO DIỆN ĐĂNG NHẬP (ĐÃ SỬA LỖI LƯU & TRÁNH AUTOFILL)
 # ==========================
 if not st.session_state.da_dang_nhap:
     st.markdown(
@@ -241,14 +250,20 @@ if not st.session_state.da_dang_nhap:
         unsafe_allow_html=True
     )
     
+    # Đọc dữ liệu nhớ từ LocalStorage nếu có
     tk_luu = storage.getItem("nho_tai_khoan_login") or ""
     mk_luu = storage.getItem("nho_mat_khau_login") or ""
-    
-    ten_dang_nhap = st.text_input("Tài khoản", value=tk_luu, placeholder="Nhập tài khoản..")
-    mat_khau_nhap = st.text_input("Mật khẩu", value=mk_luu, type="password", placeholder="Nhập mật khẩu...")
-    
     tick_luu = storage.getItem("nho_tick_login")
     tick_mac_dinh = True if tick_luu == "1" else False
+
+    # Khởi tạo giá trị tạm vào Session State để tránh bị Autofill ghi đè
+    if "input_tk_login" not in st.session_state:
+        st.session_state.input_tk_login = tk_luu
+    if "input_mk_login" not in st.session_state:
+        st.session_state.input_mk_login = mk_luu
+
+    ten_dang_nhap = st.text_input("Tài khoản", key="input_tk_login", placeholder="Nhập tài khoản..")
+    mat_khau_nhap = st.text_input("Mật khẩu", key="input_mk_login", type="password", placeholder="Nhập mật khẩu...")
 
     nho_dang_nhap = st.checkbox("💾 Nhớ tài khoản và mật khẩu", value=tick_mac_dinh)
 
@@ -257,11 +272,14 @@ if not st.session_state.da_dang_nhap:
         quyen_login = None
         chu_so_huu = None
 
+        user_clean = ten_dang_nhap.strip()
+        pass_clean = mat_khau_nhap.strip()
+
         if (
-            ten_dang_nhap in st.session_state.tai_khoan
-            and mat_khau_nhap == st.session_state.tai_khoan[ten_dang_nhap].get("pass")
+            user_clean in st.session_state.tai_khoan
+            and pass_clean == st.session_state.tai_khoan[user_clean].get("pass")
         ):
-            info_login = st.session_state.tai_khoan[ten_dang_nhap]
+            info_login = st.session_state.tai_khoan[user_clean]
             if info_login.get("trang_thai", "hoat_dong") == "khoa":
                 st.error("⛔ Tài khoản đã ngưng hoạt động")
                 st.stop()
@@ -276,8 +294,8 @@ if not st.session_state.da_dang_nhap:
                 tk_xem = data_hoi.get("_tai_khoan_xem", {})
 
                 if (
-                    ten_dang_nhap == tk_xem.get("user")
-                    and mat_khau_nhap == tk_xem.get("pass")
+                    user_clean == tk_xem.get("user")
+                    and pass_clean == tk_xem.get("pass")
                 ):
                     dang_nhap_ok = True
                     quyen_login = "xem"
@@ -288,19 +306,17 @@ if not st.session_state.da_dang_nhap:
         if dang_nhap_ok:
             if nho_dang_nhap:
                 storage.setItem("nho_tick_login", "1", key="luu_tick_login")
-                storage.setItem("nho_tai_khoan_login", ten_dang_nhap, key="luu_tk_login")
-                storage.setItem("nho_mat_khau_login", mat_khau_nhap, key="luu_mk_login")
+                storage.setItem("nho_tai_khoan_login", user_clean, key="luu_tk_login")
+                storage.setItem("nho_mat_khau_login", pass_clean, key="luu_mk_login")
             else:
                 storage.setItem("nho_tick_login", "0", key="bo_tick_login")
                 try:
-                    if storage.getItem("nho_tai_khoan_login"):
-                        storage.deleteItem("nho_tai_khoan_login", key="xoa_tk_login")
-                    if storage.getItem("nho_mat_khau_login"):
-                        storage.deleteItem("nho_mat_khau_login", key="xoa_mk_login")
+                    storage.deleteItem("nho_tai_khoan_login", key="xoa_tk_login")
+                    storage.deleteItem("nho_mat_khau_login", key="xoa_mk_login")
                 except Exception:
                     pass
 
-            time.sleep(0.5)
+            time.sleep(0.3)
 
             st.session_state.da_dang_nhap = True
             st.session_state.quyen = quyen_login
@@ -309,7 +325,7 @@ if not st.session_state.da_dang_nhap:
                 st.session_state.ten_tai_khoan = chu_so_huu
                 st.session_state.chu_so_huu = chu_so_huu
             else:
-                st.session_state.ten_tai_khoan = ten_dang_nhap
+                st.session_state.ten_tai_khoan = user_clean
                 st.session_state.chu_so_huu = None
 
             st.rerun()
@@ -327,6 +343,10 @@ with col_logout:
         st.session_state.da_dang_nhap = False
         st.session_state.ten_tai_khoan = ""
         st.session_state.quyen = None
+        if "input_tk_login" in st.session_state:
+            del st.session_state["input_tk_login"]
+        if "input_mk_login" in st.session_state:
+            del st.session_state["input_mk_login"]
         if "du_lieu_hoi" in st.session_state:
             del st.session_state.du_lieu_hoi
         if "hoi_dang_mo" in st.session_state:
@@ -925,7 +945,7 @@ if st.session_state.quyen == "hoi":
             st.dataframe(bang_tv, hide_index=True, use_container_width=True)
 
 # ====================================================
-# KHU VỰC: BẢNG XẾP HẠNG (HỘI / XEM) - ĐÃ KHẮC PHỤC LỖI RENDER HTML
+# KHU VỰC: BẢNG XẾP HẠNG (HỘI / XEM)
 # ====================================================
 if st.session_state.quyen != "admin":
     with tab_xep_hang:
@@ -1004,7 +1024,6 @@ if st.session_state.quyen != "admin":
                 so_top += 1
             html_body += "</div>"
 
-        # TÍNH TOÁN CHIỀU CAO KHUNG RENDER TỰ ĐỘNG
         chieu_cao = max(200, len(hang_xep) * 165)
         components.html(
             f"""
