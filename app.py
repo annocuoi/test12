@@ -1291,6 +1291,11 @@ if st.session_state.quyen != "admin":
                                     st.rerun()
 
         with tab2:
+            st.markdown("### 👥 Dàn hoa Toàn Hội")
+            
+            # --- BỔ SUNG Ô TÌM KIẾM TÊN HOA ---
+            tim_hoa_toan_hoi = st.text_input("🔍 Tìm hoa Toàn Hội", placeholder="Nhập tên hoa cần tìm...", key="txt_tim_hoa_toan_hoi")
+
             dem_cap = {"Đỏ": 0, "Cam": 0, "Tím": 0, "Xanh dương": 0, "Xanh lá": 0}
             for ten_hoa, info in kho_hoa_kha_dung.items():
                 owners = [tv for tv, hoa_list in du_lieu_hoi_dang_dung.items() if not tv.startswith("_") and isinstance(hoa_list, list) and ten_hoa in hoa_list]
@@ -1328,7 +1333,12 @@ if st.session_state.quyen != "admin":
                         .replace("🟣 ", "").replace("🔵 ", "").replace("🟢 ", "")
                     )
 
+                    # Lọc theo Cấp bậc
                     if loc != "Tất cả" and cap != loc:
+                        continue
+
+                    # Lọc theo Từ khóa tìm kiếm
+                    if tim_hoa_toan_hoi.strip() and tim_hoa_toan_hoi.lower().strip() not in ten_hoa.lower():
                         continue
 
                     owners = [tv for tv, hoa_list in du_lieu_hoi_dang_dung.items() if not tv.startswith("_") and isinstance(hoa_list, list) and ten_hoa in hoa_list]
