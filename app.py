@@ -97,17 +97,15 @@ html, body{ overflow-x:hidden; max-width:100%; }
 
 def anh_html(data):
     """Xử lý hiển thị ảnh an toàn, ẩn chuỗi rác và cảnh báo ảnh lỗi"""
+    img_loi = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 75 75'><rect width='75' height='75' fill='%23f1f5f9'/><text x='50%' y='50%' font-size='11' font-weight='bold' fill='%23ef4444' text-anchor='middle' dy='.3em'>⚠️ Ảnh lỗi</text></svg>"
     if not data:
-        # Ảnh thế mạng khi không có ảnh hoặc dữ liệu bị lỗi
-        return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 75 75'><rect width='75' height='75' fill='%23f1f5f9'/><text x='50%' y='50%' font-size='11' font-weight='bold' fill='%23ef4444' text-anchor='middle' dy='.3em'>⚠️ Ảnh lỗi</text></svg>"
+        return img_loi
     try:
         if isinstance(data, bytes):
             img64 = base64.b64encode(data).decode('utf-8')
         elif isinstance(data, str):
-            # Nếu phát hiện chuỗi chứa ký tự nhị phân rác lỗi cũ
             if "\\xff" in data or "\\x00" in data or data.startswith(">>") or "DIC" in data:
-                return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 75 75'><rect width='75' height='75' fill='%23f1f5f9'/><text x='50%' y='50%' font-size='11' font-weight='bold' fill='%23ef4444' text-anchor='middle' dy='.3em'>⚠️ Ảnh lỗi</text></svg>"
-            
+                return img_loi
             if data.startswith("data:image"):
                 return data
             elif data.startswith("b'") or data.startswith('b"'):
@@ -115,11 +113,10 @@ def anh_html(data):
             else:
                 img64 = data
         else:
-            return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 75 75'><rect width='75' height='75' fill='%23f1f5f9'/><text x='50%' y='50%' font-size='11' font-weight='bold' fill='%23ef4444' text-anchor='middle' dy='.3em'>⚠️ Ảnh lỗi</text></svg>"
-        
+            return img_loi
         return f"data:image/jpeg;base64,{img64}"
     except Exception:
-        return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 75 75'><rect width='75' height='75' fill='%23f1f5f9'/><text x='50%' y='50%' font-size='11' font-weight='bold' fill='%23ef4444' text-anchor='middle' dy='.3em'>⚠️ Ảnh lỗi</text></svg>"
+        return img_loi
 
 def background_image(file):
     try:
@@ -575,7 +572,15 @@ if st.session_state.quyen == "admin":
                 st.markdown("<p style='font-size:12px;color:gray;'>Kho đang trống.</p>", unsafe_allow_html=True)
             else:
                 ds_tim_hoa = ["-- Chọn --"] + list(st.session_state.kho_hoa_tong.keys())
-                tim_hoa = st.selectbox("🔍 Tìm hoa", ds_tim_hoa, key="tim_hoa_kho")
+                tim_hoa = st.selectbox("🔍 Tìm hoa hoặc Chọn hoa cần xóa", ds_tim_hoa, key="tim_hoa_kho")
+                
+                # CHỨC NĂNG XÓA HOA KHO CHUNG CHO ADMIN
+                if tim_hoa != "-- Chọn --":
+                    if st.button(f"🗑️ Xóa hoa '{tim_hoa}' khỏi Kho Chung", type="primary", use_container_width=True):
+                        del st.session_state.kho_hoa_tong[tim_hoa]
+                        if luu_du_lieu():
+                            st.success(f"✅ Đã xóa hoa {tim_hoa}")
+                            st.rerun()
             
                 dem_cap = {"Đỏ": 0, "Cam": 0, "Tím": 0, "Xanh dương": 0, "Xanh lá": 0}
                 for ten_hoa, info in st.session_state.kho_hoa_tong.items():
@@ -648,11 +653,11 @@ if st.session_state.quyen == "admin":
 if st.session_state.quyen == "hoi":
     with tab_hoi_vien:
         tab_cap_phat, tab_cap_nhanh, tab_ds_tv, tab_kho_rieng = st.tabs(
-            ["👥 Hội viên", "🌸 Cấp nhanh hoa", "📋 Danh sách hội viên", "🌺 Thêm Hoa Mới (Kho Riêng)"]
+            ["👥 Hội viên", "🌸 Cấp nhanh hoa", "📋 Danh sách hội viên", "🌺 Quản Lý Kho Riêng"]
         )
         
         with tab_kho_rieng:
-            st.markdown("## 🌺 Thêm Hoa Mới Vào Kho Riêng Của Hội")
+            st.markdown("## 🌺 Thêm / Xóa Hoa Kho Riêng Của Hội")
             st.info("💡 Hoa do Hội thêm ở đây sẽ thuộc về kho riêng của Hội này, không ảnh hưởng đến các Hội khác.")
             
             if "_kho_hoa_rieng" not in du_lieu_hoi_dang_dung:
@@ -706,6 +711,20 @@ if st.session_state.quyen == "hoi":
                         st.session_state.key_them_hoa_hoi += 1
                         st.success(f"✅ Đã thêm '{ten_clean}' vào kho riêng thành công!")
                         st.rerun()
+
+            st.write("---")
+            st.markdown("### 🗑️ Xóa hoa trong Kho Riêng")
+            ds_hoa_rieng = list(du_lieu_hoi_dang_dung.get("_kho_hoa_rieng", {}).keys())
+            if not ds_hoa_rieng:
+                st.caption("Kho riêng chưa có hoa nào.")
+            else:
+                hoa_rieng_xoa = st.selectbox("Chọn hoa riêng muốn xóa", ["-- Chọn --"] + ds_hoa_rieng, key="sl_xoa_hoa_rieng")
+                if st.button("❌ Xóa hoa này khỏi Kho Riêng", type="primary", use_container_width=True):
+                    if hoa_rieng_xoa != "-- Chọn --":
+                        del du_lieu_hoi_dang_dung["_kho_hoa_rieng"][hoa_rieng_xoa]
+                        if luu_du_lieu():
+                            st.success(f"✅ Đã xóa '{hoa_rieng_xoa}' khỏi kho riêng")
+                            st.rerun()
 
         with tab_cap_phat:
             st.markdown("## 👥 Thêm + Xóa Hội Viên")
@@ -1053,7 +1072,7 @@ if st.session_state.quyen != "admin":
                     st.write("")
                     if st.session_state.quyen == "hoi":
                         hoa_thu_hoi = st.selectbox(
-                            "↩️ Chọn hoa cần thu hồi",
+                            "↩️ Chọn hoa cần thu hồi khỏi thành viên này",
                             ["-- Chọn hoa --"] + list(kho_hoa_tv),
                             key="chon_thu_hoi"
                         )
