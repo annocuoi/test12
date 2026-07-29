@@ -95,7 +95,7 @@ html, body{ overflow-x:hidden; max-width:100%; }
 </style>
 """
 
-# HÀM ANH_HTML CŨ CỦA BẠN
+# HÀM ANH_HTML CỦA BẠN
 def anh_html(data):
     if not data:
         return ""
@@ -465,7 +465,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# CHỈ ĐẾM THÀNH VIÊN THẬT (KHÔNG ĐẾM CÁC CẤU TRÚC HỆ THỐNG BẮT ĐẦU BẰNG DẤU GẠCH DƯỚI)
 du_lieu_dem = {
     k: v for k, v in du_lieu_hoi_dang_dung.items()
     if not k.startswith("_") and isinstance(v, list)
@@ -926,7 +925,7 @@ if st.session_state.quyen == "hoi":
             st.dataframe(bang_tv, hide_index=True, use_container_width=True)
 
 # ====================================================
-# KHU VỰC: BẢNG XẾP HẠNG (HỘI / XEM)
+# KHU VỰC: BẢNG XẾP HẠNG (HỘI / XEM) - ĐÃ KHẮC PHỤC LỖI RENDER HTML
 # ====================================================
 if st.session_state.quyen != "admin":
     with tab_xep_hang:
@@ -974,12 +973,12 @@ if st.session_state.quyen != "admin":
         for i in range(1, len(bang_xep_hang), 2):
             hang_xep.append(bang_xep_hang[i:i+2])
 
-        html = ""
+        html_body = ""
         so_top = 1
 
         for hang in hang_xep:
             cot = len(hang)
-            html += f'<div style="display:grid; grid-template-columns:repeat({cot},150px); justify-content:center; gap:12px; margin-bottom:6px;">'
+            html_body += f'<div style="display:flex; justify-content:center; gap:15px; margin-bottom:12px; flex-wrap:wrap;">'
 
             for tv in hang:
                 if so_top == 1:
@@ -989,21 +988,35 @@ if st.session_state.quyen != "admin":
                 elif so_top == 3:
                     cup, vien, do_day_vien = "🥉", "#cd7f32", "4px"
                 else:
-                    cup, vien, do_day_vien = f"#{so_top}", "white", "2px"
+                    cup, vien, do_day_vien = f"#{so_top}", "#94a3b8", "2px"
 
-                html += f"""
-                <div style="border:{do_day_vien} solid {vien}; border-radius:8px; width:140px; height:140px; background:rgba(255,255,255,0.85); text-align:center; font-size:14px; line-height:1.15; padding:3px; overflow:hidden;">
-                    <div style="font-size:12px">{cup}</div>
-                    <b>{tv['ten']}</b><br>
-                    🌺 {tv['tong']}<br>
-                    🔴 {tv['cap']['Đỏ']} 🟠 {tv['cap']['Cam']}<br>
-                    🟣 {tv['cap']['Tím']} 🔵 {tv['cap']['Xanh dương']} 🟢 {tv['cap']['Xanh lá']}<br>
+                html_body += f"""
+                <div style="border:{do_day_vien} solid {vien}; border-radius:12px; width:140px; background:rgba(255,255,255,0.9); text-align:center; font-size:13px; line-height:1.2; padding:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1); font-family:sans-serif;">
+                    <div style="font-size:16px;">{cup}</div>
+                    <b style="font-size:14px; color:#1e293b;">{tv['ten']}</b><br>
+                    <span style="color:#d97706; font-weight:bold;">🌺 {tv['tong']}</span><br>
+                    <div style="margin-top:4px;">
+                        🔴 {tv['cap']['Đỏ']} &nbsp; 🟠 {tv['cap']['Cam']}<br>
+                        🟣 {tv['cap']['Tím']} &nbsp; 🔵 {tv['cap']['Xanh dương']} &nbsp; 🟢 {tv['cap']['Xanh lá']}
+                    </div>
                 </div>
                 """
                 so_top += 1
-            html += "</div>"
+            html_body += "</div>"
 
-        st.markdown(html, unsafe_allow_html=True)
+        # TÍNH TOÁN CHIỀU CAO KHUNG RENDER TỰ ĐỘNG
+        chieu_cao = max(200, len(hang_xep) * 165)
+        components.html(
+            f"""
+            <html>
+            <body style="margin:0; padding:0; background:transparent;">
+                {html_body}
+            </body>
+            </html>
+            """,
+            height=chieu_cao,
+            scrolling=True
+        )
 
 # ====================================================
 # KHU VỰC 3: BỘ SƯU TẬP (HỘI / XEM)
@@ -1122,7 +1135,6 @@ if st.session_state.quyen != "admin":
                     if loc != "Tất cả" and cap != loc:
                         continue
 
-                    # CHỈ TÍNH HOA ĐÃ ĐƯỢC CẤP CHO HỘI VIÊN THẬT
                     owners = [tv for tv, hoa_list in du_lieu_hoi_dang_dung.items() if not tv.startswith("_") and isinstance(hoa_list, list) and ten_hoa in hoa_list]
                     if owners:
                         link_anh = anh_html(info.get("anh"))
@@ -1146,7 +1158,6 @@ if st.session_state.quyen != "admin":
             tim_so_huu = st.selectbox("Nhập tên hoa", ds_tim_so_huu, key="tim_so_huu_tra_cuu")
 
             if tim_so_huu != "-- Chọn --":
-                # CHỈ TÌM TRONG CÁC THÀNH VIÊN THẬT (LOẠI BỎ KHỞI TẠO BẰNG DẤU GẠCH DƯỚI SE VÀ KHO RIÊNG)
                 ds_co = [tv for tv, hoa_list in du_lieu_hoi_dang_dung.items() if not tv.startswith("_") and isinstance(hoa_list, list) and tim_so_huu in hoa_list]
                 st.success(f"🌺 {tim_so_huu} - Có {len(ds_co)} thành viên sở hữu")
                 if ds_co:
