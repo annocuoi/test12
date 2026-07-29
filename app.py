@@ -95,6 +95,7 @@ html, body{ overflow-x:hidden; max-width:100%; }
 </style>
 """
 
+# HÀM ANH_HTML CŨ CỦA BẠN
 def anh_html(data):
     if not data:
         return ""
@@ -464,9 +465,10 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+# CHỈ ĐẾM THÀNH VIÊN THẬT (KHÔNG ĐẾM CÁC CẤU TRÚC HỆ THỐNG BẮT ĐẦU BẰNG DẤU GẠCH DƯỚI)
 du_lieu_dem = {
     k: v for k, v in du_lieu_hoi_dang_dung.items()
-    if not k.startswith("_")
+    if not k.startswith("_") and isinstance(v, list)
 }
 
 tong_hoa_hoi_vien = sum(len(hoa) for hoa in du_lieu_dem.values())
@@ -570,7 +572,6 @@ if st.session_state.quyen == "admin":
                 ds_tim_hoa = ["-- Chọn --"] + list(st.session_state.kho_hoa_tong.keys())
                 tim_hoa = st.selectbox("🔍 Tìm hoa hoặc Chọn hoa cần xóa", ds_tim_hoa, key="tim_hoa_kho")
                 
-                # CHỨC NĂNG XÓA HOA KHO CHUNG CHO ADMIN
                 if tim_hoa != "-- Chọn --":
                     if st.button(f"🗑️ Xóa hoa '{tim_hoa}' khỏi Kho Chung", type="primary", use_container_width=True):
                         del st.session_state.kho_hoa_tong[tim_hoa]
@@ -740,7 +741,9 @@ if st.session_state.quyen == "hoi":
                         ten_tv_clean = ten_tv_moi.strip()
                         if ten_tv_clean == "":
                             st.warning("⚠️ Vui lòng nhập tên hội viên")
-                        elif ten_tv_clean.lower() in [x.lower() for x in du_lieu_hoi_dang_dung.keys()]:
+                        elif ten_tv_clean.startswith("_"):
+                            st.error("❌ Tên hội viên không được bắt đầu bằng dấu '_'")
+                        elif ten_tv_clean.lower() in [x.lower() for x in du_lieu_hoi_dang_dung.keys() if not x.startswith("_")]:
                             st.error("❌ Hội viên đã tồn tại")
                         else:
                             du_lieu_hoi_dang_dung[ten_tv_clean] = []
@@ -749,7 +752,7 @@ if st.session_state.quyen == "hoi":
                                 st.success("✅ Đã thêm hội viên")
                                 st.rerun()
 
-                    danh_sach_tv_that = [x for x in du_lieu_hoi_dang_dung.keys() if not x.startswith("_")]
+                    danh_sach_tv_that = [x for x in du_lieu_hoi_dang_dung.keys() if not x.startswith("_") and isinstance(du_lieu_hoi_dang_dung[x], list)]
                     tv_xoa = st.selectbox("🗑 Xóa hội viên", ["-- Chọn --"] + danh_sach_tv_that, key="xoa_tv")
 
                     if st.button("❌ Xóa", use_container_width=True):
@@ -760,7 +763,7 @@ if st.session_state.quyen == "hoi":
 
         with tab_cap_nhanh:
             st.markdown("## 🪷 Cấp Hoa Cho Hội Viên")
-            danh_sach_tv_cn = [x for x in du_lieu_hoi_dang_dung.keys() if not x.startswith("_")]
+            danh_sach_tv_cn = [x for x in du_lieu_hoi_dang_dung.keys() if not x.startswith("_") and isinstance(du_lieu_hoi_dang_dung[x], list)]
 
             tv_chon = st.selectbox("👤 Chọn hội viên", ["-- Chọn --"] + danh_sach_tv_cn, key="chon_tv_cap_nhanh")
             
@@ -893,12 +896,12 @@ if st.session_state.quyen == "hoi":
 
         with tab_ds_tv:
             st.markdown("## 📋 Danh sách hội viên")
-            danh_sach_tv_tab = [tv for tv in du_lieu_hoi_dang_dung.keys() if not tv.startswith("_")]
+            danh_sach_tv_tab = [tv for tv, val in du_lieu_hoi_dang_dung.items() if not tv.startswith("_") and isinstance(val, list)]
             st.info(f"👥 Tổng hội viên: {len(danh_sach_tv_tab)}")
 
             bang_tv = []
             for ten_tv, ds_hoa in du_lieu_hoi_dang_dung.items():
-                if ten_tv.startswith("_"):
+                if ten_tv.startswith("_") or not isinstance(ds_hoa, list):
                     continue
 
                 dem = {"Đỏ": 0, "Cam": 0, "Tím": 0, "Xanh dương": 0, "Xanh lá": 0}
@@ -939,7 +942,7 @@ if st.session_state.quyen != "admin":
 
         bang_xep_hang = []
         for ten_tv, ds_hoa in du_lieu_hoi_dang_dung.items():
-            if ten_tv.startswith("_"):
+            if ten_tv.startswith("_") or not isinstance(ds_hoa, list):
                 continue
 
             dem = {"Đỏ": 0, "Cam": 0, "Tím": 0, "Xanh dương": 0, "Xanh lá": 0}
@@ -1010,7 +1013,7 @@ if st.session_state.quyen != "admin":
         tab1, tab2, tab3 = st.tabs(["👤 Cá Nhân", "👥 Toàn Hội", "🔎 Tra cứu"])
         
         with tab1:
-            danh_sach_tv_st = [x for x in du_lieu_hoi_dang_dung.keys() if not x.startswith("_")]
+            danh_sach_tv_st = [x for x, val in du_lieu_hoi_dang_dung.items() if not x.startswith("_") and isinstance(val, list)]
             tv_xem = st.selectbox("Xem kho của:", ["-- Chọn --"] + danh_sach_tv_st, key="selectTV")
         
             if tv_xem != "-- Chọn --" and tv_xem in du_lieu_hoi_dang_dung:
@@ -1081,7 +1084,7 @@ if st.session_state.quyen != "admin":
         with tab2:
             dem_cap = {"Đỏ": 0, "Cam": 0, "Tím": 0, "Xanh dương": 0, "Xanh lá": 0}
             for ten_hoa, info in kho_hoa_kha_dung.items():
-                owners = [tv for tv, hoa_list in du_lieu_hoi_dang_dung.items() if ten_hoa in hoa_list]
+                owners = [tv for tv, hoa_list in du_lieu_hoi_dang_dung.items() if not tv.startswith("_") and isinstance(hoa_list, list) and ten_hoa in hoa_list]
                 if owners:
                     cap = info.get("cap", "")
                     if cap in dem_cap:
@@ -1119,7 +1122,8 @@ if st.session_state.quyen != "admin":
                     if loc != "Tất cả" and cap != loc:
                         continue
 
-                    owners = [tv for tv, hoa_list in du_lieu_hoi_dang_dung.items() if ten_hoa in hoa_list]
+                    # CHỈ TÍNH HOA ĐÃ ĐƯỢC CẤP CHO HỘI VIÊN THẬT
+                    owners = [tv for tv, hoa_list in du_lieu_hoi_dang_dung.items() if not tv.startswith("_") and isinstance(hoa_list, list) and ten_hoa in hoa_list]
                     if owners:
                         link_anh = anh_html(info.get("anh"))
                         mau = {
@@ -1142,17 +1146,21 @@ if st.session_state.quyen != "admin":
             tim_so_huu = st.selectbox("Nhập tên hoa", ds_tim_so_huu, key="tim_so_huu_tra_cuu")
 
             if tim_so_huu != "-- Chọn --":
-                ds_co = [tv for tv, hoa_list in du_lieu_hoi_dang_dung.items() if tim_so_huu in hoa_list]
+                # CHỈ TÌM TRONG CÁC THÀNH VIÊN THẬT (LOẠI BỎ KHỞI TẠO BẰNG DẤU GẠCH DƯỚI SE VÀ KHO RIÊNG)
+                ds_co = [tv for tv, hoa_list in du_lieu_hoi_dang_dung.items() if not tv.startswith("_") and isinstance(hoa_list, list) and tim_so_huu in hoa_list]
                 st.success(f"🌺 {tim_so_huu} - Có {len(ds_co)} thành viên sở hữu")
-                for tv in ds_co:
-                    st.markdown(
-                        f"""
-                        <p style="color:#000000 !important; font-weight:800 !important; font-size:16px !important; margin:6px 0;">
-                        👤 {tv}
-                        </p>
-                        """,
-                        unsafe_allow_html=True
-                    )
+                if ds_co:
+                    for tv in ds_co:
+                        st.markdown(
+                            f"""
+                            <p style="color:#000000 !important; font-weight:800 !important; font-size:16px !important; margin:6px 0;">
+                            👤 {tv}
+                            </p>
+                            """,
+                            unsafe_allow_html=True
+                        )
+                else:
+                    st.info("Chưa có thành viên nào sở hữu hoa này.")
 
 # ====================================================
 # KHU VỰC THÔNG TIN VÀ SAO LƯU (HỘI / XEM)
@@ -1334,7 +1342,7 @@ if st.session_state.quyen == "admin":
         for ten, info in st.session_state.tai_khoan.items():
             if info.get("quyen") == "hoi":
                 du_lieu_hoi = doc_du_lieu_hoi(ten)
-                so_tv = len([k for k in du_lieu_hoi.keys() if not k.startswith("_")])
+                so_tv = len([k for k in du_lieu_hoi.keys() if not k.startswith("_") and isinstance(du_lieu_hoi[k], list)])
                 
                 st.markdown(
                     f"""
