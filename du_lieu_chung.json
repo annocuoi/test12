@@ -1338,13 +1338,6 @@
             "pass": "13051998",
             "quyen": "admin"
         },
-        "a": {
-            "pass": "1",
-            "quyen": "hoi",
-            "trang_thai": "hoat_dong",
-            "ten_hien_thi": "a",
-            "ngay_tao": "24/06/2026"
-        },
         "b": {
             "pass": "1",
             "quyen": "hoi",
