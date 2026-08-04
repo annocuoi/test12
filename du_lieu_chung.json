@@ -1337,6 +1337,13 @@
         "admin": {
             "pass": "13051998",
             "quyen": "admin"
+        },
+        "phanbinh": {
+            "pass": "123",
+            "quyen": "hoi",
+            "trang_thai": "hoat_dong",
+            "ten_hien_thi": "phanbinh",
+            "ngay_tao": "04/08/2026"
         }
     }
 }
